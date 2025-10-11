@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
@@ -27,17 +28,21 @@ export function HeroSection() {
           del mundo para ofrecerte una experiencia única en cada taza.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">
-            Explorar Colección
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-3 bg-transparent"
-          >
-            Nuestra Historia
-          </Button>
+          <Link href="/productos">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">
+              Explorar Colección
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+          <Link href="/acerca">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-3 bg-transparent"
+            >
+              Nuestra Historia
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

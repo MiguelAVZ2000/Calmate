@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { createClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Eye, EyeOff, Crown } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export function AuthForm() {
@@ -73,14 +74,6 @@ export function AuthForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4">
-            <Crown className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Calmoté</h1>
-          <p className="text-muted-foreground">Únete a nuestra exclusiva comunidad de amantes del té</p>
-        </div>
-
         <Card className="border-2 border-primary/10 shadow-xl">
           <Tabs defaultValue="login" className="w-full">
             <CardHeader className="space-y-1 pb-4">
@@ -153,9 +146,11 @@ export function AuthForm() {
                       <input type="checkbox" className="rounded border-primary/20" />
                       <span className="text-muted-foreground">Recordarme</span>
                     </label>
-                    <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
-                      ¿Olvidaste tu contraseña?
-                    </Button>
+                    <Link href="/auth/forgot-password">
+                      <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
+                        ¿Olvidaste tu contraseña?
+                      </Button>
+                    </Link>
                   </div>
 
                   <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5">
@@ -271,13 +266,17 @@ export function AuthForm() {
                     <input type="checkbox" className="rounded border-primary/20 mt-0.5" required />
                     <span className="text-muted-foreground leading-relaxed">
                       Acepto los{" "}
-                      <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
-                        términos y condiciones
-                      </Button>{" "}
+                      <Link href="/legal/terms">
+                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
+                          términos y condiciones
+                        </Button>
+                      </Link>{" "}
                       y la{" "}
-                      <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
-                        política de privacidad
-                      </Button>
+                      <Link href="/legal/privacy">
+                        <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
+                          política de privacidad
+                        </Button>
+                      </Link>
                     </span>
                   </div>
 
@@ -293,9 +292,11 @@ export function AuthForm() {
         <div className="text-center mt-6 text-sm text-muted-foreground">
           <p>
             ¿Necesitas ayuda?{" "}
-            <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
-              Contáctanos
-            </Button>
+            <Link href="/contacto">
+              <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
+                Contáctanos
+              </Button>
+            </Link>
           </p>
         </div>
       </div>

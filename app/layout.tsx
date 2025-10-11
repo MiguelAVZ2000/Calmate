@@ -2,6 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Playfair_Display, Source_Sans_3 as Source_Sans_Pro } from "next/font/google"
 import SupabaseProvider from "@/components/auth-provider"
+import { CartProvider } from "@/hooks/useCart"
+import { Toaster } from "sonner"
 import "./globals.css"
 
 const playfair = Playfair_Display({
@@ -32,7 +34,10 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${playfair.variable} ${sourceSans.variable} antialiased`}>
       <body>
-        <SupabaseProvider>{children}</SupabaseProvider>
+        <SupabaseProvider>
+          <CartProvider>{children}</CartProvider>
+        </SupabaseProvider>
+        <Toaster />
       </body>
     </html>
   )

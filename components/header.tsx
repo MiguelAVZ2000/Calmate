@@ -7,11 +7,15 @@ import { Button } from "@/components/ui/button"
 import { ShoppingBag, Menu, X, User, LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { SearchInput } from "./ui/search-input"
+import { useCart } from "@/hooks/useCart"
 
 export function Header() {
   const router = useRouter()
   const { supabase, user } = useSupabase()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { cartItems } = useCart()
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -35,20 +39,20 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link href="/" className="text-foreground hover:text-primary transition-colors font-semibold">
               Inicio
             </Link>
-            <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-semibold">
               Productos
             </Link>
-            <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-semibold">
               Acerca de Nosotros
             </Link>
-            <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-semibold">
               Contacto
             </Link>
             {isAdmin && (
-              <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
+              <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-semibold">
                 Admin
               </Link>
             )}
@@ -61,7 +65,7 @@ export function Header() {
               <div className="flex items-center space-x-4">
                 <Link href="/perfil" className="flex items-center space-x-2 hover:text-primary transition-colors">
                   <User className="h-5 w-5" />
-                  <span className="text-sm font-medium text-foreground hidden lg:inline">{userEmail}</span>
+                  <span className="text-sm font-semibold text-foreground hidden lg:inline">{userEmail}</span>
                 </Link>
                 <Button onClick={handleSignOut} variant="ghost" size="icon" className="text-foreground hover:text-primary">
                   <LogOut className="h-5 w-5" />
@@ -77,9 +81,11 @@ export function Header() {
             <Link href="/carrito">
               <Button variant="ghost" size="icon" className="text-foreground hover:text-primary relative">
                 <ShoppingBag className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  3
-                </span>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
               </Button>
             </Link>
           </div>
@@ -97,20 +103,20 @@ export function Header() {
               <SearchInput />
             </div>
             <nav className="flex flex-col space-y-4 mt-4">
-              <Link href="/" className="text-foreground hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
                 Inicio
               </Link>
-              <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
                 Productos
               </Link>
-              <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
                 Acerca de Nosotros
               </Link>
-              <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
                 Contacto
               </Link>
                {isAdmin && (
-                <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-medium" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
                   Admin
                 </Link>
               )}
@@ -120,7 +126,7 @@ export function Header() {
                     <div className="flex items-center space-x-4">
                       <Link href="/perfil" className="flex items-center space-x-2 hover:text-primary transition-colors" onClick={() => setIsMenuOpen(false)}>
                         <User className="h-5 w-5" />
-                        <span className="text-sm font-medium text-foreground">{userEmail}</span>
+                        <span className="text-sm font-semibold text-foreground">{userEmail}</span>
                       </Link>
                       <Button onClick={handleSignOut} variant="ghost" size="icon" className="text-foreground hover:text-primary">
                         <LogOut className="h-5 w-5" />
@@ -137,9 +143,11 @@ export function Header() {
                 <Link href="/carrito" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="ghost" size="icon" className="text-foreground hover:text-primary relative">
                     <ShoppingBag className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      3
-                    </span>
+                    {totalItems > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {totalItems}
+                      </span>
+                    )}
                   </Button>
                 </Link>
               </div>
