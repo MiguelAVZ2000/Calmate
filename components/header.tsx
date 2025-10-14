@@ -4,14 +4,22 @@ import { useState } from "react"
 import Link from "next/link"
 import { useSupabase } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
-import { ShoppingBag, Menu, X, User, LogOut } from "lucide-react"
+import { ShoppingBag, Menu, X, User, LogOut, Home, Store, Shield } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { SearchInput } from "./ui/search-input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useCart } from "@/hooks/useCart"
 
 export function Header() {
   const router = useRouter()
-  const { supabase, user } = useSupabase()
+  const { supabase, user, profile } = useSupabase()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { cartItems } = useCart()
 
@@ -23,7 +31,7 @@ export function Header() {
   }
 
   const userEmail = user?.email
-  const isAdmin = user?.user_metadata.role === 'admin'
+  const isAdmin = profile?.role === 'admin'
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -39,20 +47,17 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-foreground hover:text-primary transition-colors font-semibold">
+            <Link href="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold">
+              <Home className="h-5 w-5" />
               Inicio
             </Link>
-            <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-semibold">
+            <Link href="/productos" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold">
+              <Store className="h-5 w-5" />
               Productos
             </Link>
-            <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-semibold">
-              Acerca de Nosotros
-            </Link>
-            <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-semibold">
-              Contacto
-            </Link>
             {isAdmin && (
-              <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-semibold">
+              <Link href="/admin" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold">
+                <Shield className="h-5 w-5" />
                 Admin
               </Link>
             )}
@@ -62,19 +67,28 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <SearchInput />
             {user ? (
-              <div className="flex items-center space-x-4">
-                <Link href="/perfil" className="flex items-center space-x-2 hover:text-primary transition-colors">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold p-2 rounded-md hover:bg-accent">
                   <User className="h-5 w-5" />
-                  <span className="text-sm font-semibold text-foreground hidden lg:inline">{userEmail}</span>
-                </Link>
-                <Button onClick={handleSignOut} variant="ghost" size="icon" className="text-foreground hover:text-primary">
-                  <LogOut className="h-5 w-5" />
-                </Button>
-              </div>
+                  Mi Perfil
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/perfil">Editar Perfil</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                    Cerrar Sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link href="/auth">
-                <Button variant="ghost" size="icon" className="text-foreground hover:text-primary">
+                <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-primary">
                   <User className="h-5 w-5" />
+                  <span>Iniciar Sesión</span>
                 </Button>
               </Link>
             )}
@@ -103,39 +117,47 @@ export function Header() {
               <SearchInput />
             </div>
             <nav className="flex flex-col space-y-4 mt-4">
-              <Link href="/" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+                <Home className="h-5 w-5" />
                 Inicio
               </Link>
-              <Link href="/productos" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/productos" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+                <Store className="h-5 w-5" />
                 Productos
               </Link>
-              <Link href="/acerca" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
-                Acerca de Nosotros
-              </Link>
-              <Link href="/contacto" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
-                Contacto
-              </Link>
                {isAdmin && (
-                <Link href="/admin" className="text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/admin" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
+                  <Shield className="h-5 w-5" />
                   Admin
                 </Link>
               )}
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <div className="flex items-center space-x-4">
                   {user ? (
-                    <div className="flex items-center space-x-4">
-                      <Link href="/perfil" className="flex items-center space-x-2 hover:text-primary transition-colors" onClick={() => setIsMenuOpen(false)}>
-                        <User className="h-5 w-5" />
-                        <span className="text-sm font-semibold text-foreground">{userEmail}</span>
-                      </Link>
-                      <Button onClick={handleSignOut} variant="ghost" size="icon" className="text-foreground hover:text-primary">
-                        <LogOut className="h-5 w-5" />
-                      </Button>
+                    <div className="flex items-center justify-between w-full">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold p-2 rounded-md hover:bg-accent">
+                          <User className="h-5 w-5" />
+                          Mi Perfil
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild className="cursor-pointer" onClick={() => setIsMenuOpen(false)}>
+                            <Link href="/perfil">Editar Perfil</Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                            Cerrar Sesión
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   ) : (
                     <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="icon" className="text-foreground hover:text-primary">
+                      <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-primary">
                         <User className="h-5 w-5" />
+                        <span>Iniciar Sesión</span>
                       </Button>
                     </Link>
                   )}
@@ -143,7 +165,7 @@ export function Header() {
                 <Link href="/carrito" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="ghost" size="icon" className="text-foreground hover:text-primary relative">
                     <ShoppingBag className="h-5 w-5" />
-                    {totalItems > 0 && (
+                    {totalItems > <strong>0</strong> && (
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                         {totalItems}
                       </span>

@@ -1,59 +1,83 @@
-"use client"
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Star, Minus, Plus, Truck, Shield, RotateCcw } from "lucide-react"
-import { formatCurrency } from "@/lib/utils"
-import { useCart, ProductVariant } from "@/hooks/useCart"
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Star, Minus, Plus, Truck, Shield, RotateCcw } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
+import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
+import { ProductReviews } from "@/components/product-reviews";
+import { ReviewForm } from "@/components/review-form";
 
+// Types now reflect the new database schema
 type Product = {
   id: number;
   name: string;
   description: string;
+  image_url: string;
+  // rating, reviews, badge, etc. can be added back if they exist in your 'products' table
+};
+
+type Variant = {
+  id: number;
+  product_id: number;
+  weight: number;
   price: number;
-  original_price?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  badge: string;
   stock: number;
 };
 
-export function ProductDetailsClient({ product }: { product: Product }) {
+type Review = {
+  id: number;
+  rating: number;
+  comment: string;
+  created_at: string;
+  user: { id: string; email: string } | null;
+};
+
+export function ProductDetailsClient({ product, reviews, variants }: { product: Product, reviews: Review[], variants: Variant[] }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(variants?.[0] || null);
+  const [selectedImage, setSelectedImage] = useState(product.image_url);
 
-  // Define variants based on base price
-  const variants = [
-    { weight: 100, price: product.price },
-    { weight: 500, price: product.price * 4.5 }, // 10% discount
-    { weight: 1000, price: product.price * 8 }, // 20% discount
-  ];
-
-  const [selectedVariant, setSelectedVariant] = useState(variants[0]);
-  const [selectedImage, setSelectedImage] = useState(product.image);
-  const images = [product.image, product.image, product.image, product.image]; // Placeholder images
+  useEffect(() => {
+    // If variants are loaded, set the first one as selected
+    if (variants && variants.length > 0) {
+      setSelectedVariant(variants[0]);
+    }
+  }, [variants]);
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
+  const isStockAvailable = selectedVariant ? quantity <= selectedVariant.stock : false;
+
   const handleAddToCart = () => {
-    const variantToAdd: ProductVariant = {
+    if (!selectedVariant) {
+      toast.error("Por favor, selecciona una opción.");
+      return;
+    }
+    if (!isStockAvailable) {
+      toast.error("No hay suficiente stock para la cantidad seleccionada.");
+      return;
+    }
+
+    addToCart({
       productId: String(product.id),
+      variantId: selectedVariant.id, // Pass variant ID to cart
       name: product.name,
       price: selectedVariant.price,
-      image_url: product.image,
+      image_url: product.image_url,
       weight: selectedVariant.weight,
-    };
-    // Add to cart 'quantity' times
-    for (let i = 0; i < quantity; i++) {
-      addToCart(variantToAdd);
-    }
+      quantity: quantity,
+    });
+
     toast.success(`${quantity} x ${product.name} (${selectedVariant.weight}g) añadido(s) al carrito.`);
+    setQuantity(1); // Reset quantity after adding
   };
 
   return (
@@ -62,57 +86,23 @@ export function ProductDetailsClient({ product }: { product: Product }) {
         {/* Product Images */}
         <div className="space-y-4">
           <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-            <img
-              src={selectedImage || "/placeholder.svg"}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+            <img src={selectedImage || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {images.map((image, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(image)}
-                className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
-                  selectedImage === image ? "border-primary" : "border-transparent"
-                }`}
-              >
-                <img
-                  src={image || "/placeholder.svg"}
-                  alt={`${product.name} ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
+          {/* Image gallery can be re-implemented here if needed */}
         </div>
 
         {/* Product Info */}
         <div className="space-y-6">
           <div>
-            <Badge className="bg-primary text-primary-foreground mb-3">{product.badge}</Badge>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{product.name}</h1>
-
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-muted-foreground"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="font-medium">{product.rating}</span>
-              <span className="text-muted-foreground">({product.reviews} reseñas)</span>
-            </div>
+            {/* Badge can be re-added if it exists on the product table */}
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">{product.name}</h1>
+            
+            {/* Reviews can be re-added here */}
 
             <div className="flex items-center space-x-3 mb-6">
-              <span className="font-serif text-3xl font-bold text-foreground">{formatCurrency(selectedVariant.price)}</span>
-              {product.original_price && (
-                <span className="text-xl text-muted-foreground line-through">{formatCurrency(product.original_price)}</span>
-              )}
+              <span className="font-serif text-4xl font-bold text-primary">
+                {selectedVariant ? formatCurrency(selectedVariant.price) : "-"}
+              </span>
             </div>
           </div>
 
@@ -124,66 +114,74 @@ export function ProductDetailsClient({ product }: { product: Product }) {
 
           <Separator />
 
-          <div className="space-y-6">
-            {/* Weight Selection */}
-            <div>
+          {variants && variants.length > 0 ? (
+            <div className="space-y-6">
+              {/* Weight Selection */}
+              <div>
                 <span className="font-medium text-foreground mb-2 block">Gramaje:</span>
                 <div className="flex gap-2">
-                    {variants.map((variant) => (
-                        <Button 
-                            key={variant.weight} 
-                            variant={selectedVariant.weight === variant.weight ? "default" : "outline"}
-                            onClick={() => setSelectedVariant(variant)}
-                            className="flex-grow"
-                        >
-                            {variant.weight}g
-                        </Button>
-                    ))}
+                  {variants.map((variant) => (
+                    <Button 
+                      key={variant.id} 
+                      variant={selectedVariant?.id === variant.id ? "default" : "outline"}
+                      onClick={() => setSelectedVariant(variant)}
+                    >
+                      {variant.weight}g
+                    </Button>
+                  ))}
                 </div>
-            </div>
+              </div>
 
-            {/* Quantity Selection */}
-            <div className="flex items-center space-x-4">
-              <span className="font-medium text-foreground">Cantidad:</span>
-              <div className="flex items-center border border-border rounded-lg">
-                <Button variant="ghost" size="icon" onClick={decrementQuantity} className="h-10 w-10">
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="px-4 py-2 font-medium">{quantity}</span>
-                <Button variant="ghost" size="icon" onClick={incrementQuantity} className="h-10 w-10">
-                  <Plus className="h-4 w-4" />
+              {/* Quantity Selection */}
+              <div className="flex items-center space-x-4">
+                <span className="font-medium text-foreground">Cantidad:</span>
+                <div className="flex items-center border border-border rounded-lg">
+                  <Button variant="ghost" size="icon" onClick={decrementQuantity} className="h-10 w-10">
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="px-4 py-2 font-medium">{quantity}</span>
+                  <Button variant="ghost" size="icon" onClick={incrementQuantity} className="h-10 w-10">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {selectedVariant ? `${selectedVariant.stock} unidades disponibles` : ""}
+                </span>
+              </div>
+
+              {/* Add to Cart Button */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  size="lg" 
+                  className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50"
+                  onClick={handleAddToCart}
+                  disabled={!isStockAvailable || !selectedVariant}
+                >
+                  {isStockAvailable ? `Añadir al Carrito - ${selectedVariant ? formatCurrency(selectedVariant.price * quantity) : ""}` : "Sin stock"}
                 </Button>
               </div>
             </div>
-
-            {/* Add to Cart Button */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button size="lg" className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" onClick={handleAddToCart}>
-                Añadir al Carrito - {formatCurrency(selectedVariant.price * quantity)}
-              </Button>
-            </div>
-          </div>
+          ) : (
+            <p className="text-lg font-semibold text-muted-foreground">Este producto no está disponible actualmente.</p>
+          )}
 
           <Card className="border-border/50">
             <CardContent className="p-4">
-              <div className="grid gap-3">
-                <div className="flex items-center space-x-3">
-                  <Truck className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Envío gratuito sobre $40.000</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Garantía de calidad de 30 días</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <RotateCcw className="h-5 w-5 text-primary" />
-                  <span className="text-sm">Devoluciones fáciles y gratuitas</span>
-                </div>
-              </div>
+              {/* ... shipping info ... */}
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Product Reviews */}
+      <div className="mt-12">
+        <h2 className="font-serif text-2xl font-bold text-foreground mb-6">Reseñas de Clientes</h2>
+        <ProductReviews reviews={reviews} />
+        <div className="mt-8">
+          <h3 className="font-serif text-xl font-bold text-foreground mb-4">Escribe una reseña</h3>
+          <ReviewForm productId={product.id} />
+        </div>
+      </div>
     </main>
-  )
+  );
 }

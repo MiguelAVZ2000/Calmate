@@ -4,10 +4,18 @@ import { createContext, useContext, useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase"
 import type { SupabaseClient, User } from "@supabase/supabase-js"
 
+// Define the Profile type
+export type Profile = {
+  id: string
+  full_name: string
+  address: string
+  role: string
+}
 
 type SupabaseContext = {
   supabase: SupabaseClient
   user: User | null
+  profile: Profile | null
 }
 
 const Context = createContext<SupabaseContext | undefined>(undefined)
@@ -15,20 +23,36 @@ const Context = createContext<SupabaseContext | undefined>(undefined)
 export default function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN") {
-        setUser(session?.user ?? null)
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        setProfile(userProfile)
       }
+    }
 
-      if (event === "SIGNED_OUT") {
-        setUser(null)
+    fetchSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        setProfile(userProfile)
+      } else {
+        setProfile(null)
       }
-    })
-
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
     })
 
     return () => {
@@ -37,7 +61,7 @@ export default function SupabaseProvider({ children }: { children: React.ReactNo
   }, [supabase])
 
   return (
-    <Context.Provider value={{ supabase, user }}>
+    <Context.Provider value={{ supabase, user, profile }}>
       {children}
     </Context.Provider>
   )
