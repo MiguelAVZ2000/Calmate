@@ -34,9 +34,11 @@ function ProfileSkeleton() {
 }
 
 export default function ProfilePage() {
-  const { user, profile } = useSupabase()
+  const { user, profile, supabase } = useSupabase()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
+  const [regions, setRegions] = useState([])
+  const [communes, setCommunes] = useState([])
 
   useEffect(() => {
     // Redirect if user is not logged in after a short delay
@@ -47,6 +49,34 @@ export default function ProfilePage() {
       return () => clearTimeout(timer)
     }
   }, [user, router])
+
+  useEffect(() => {
+    const fetchRegionsAndCommunes = async () => {
+      if (supabase) {
+        const { data: regionsData, error: regionsError } = await supabase
+          .from('regions')
+          .select('*')
+        
+        if (regionsError) {
+          console.error('Error fetching regions:', regionsError)
+        } else {
+          setRegions(regionsData)
+        }
+
+        const { data: communesData, error: communesError } = await supabase
+          .from('communes')
+          .select('*')
+
+        if (communesError) {
+          console.error('Error fetching communes:', communesError)
+        } else {
+          setCommunes(communesData)
+        }
+      }
+    }
+
+    fetchRegionsAndCommunes()
+  }, [supabase])
 
   if (!user || !profile) {
     // Show skeleton while user and profile are loading
@@ -90,6 +120,8 @@ export default function ProfilePage() {
               {isEditing ? (
                 <EditProfileForm
                   profile={profile}
+                  regions={regions}
+                  communes={communes}
                   onSave={handleSave}
                   onCancel={() => setIsEditing(false)}
                 />

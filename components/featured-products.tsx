@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ChevronLeft, ChevronRight, Star } from "lucide-react"
-import { createClient } from "@/lib/supabase"
+import { createClient } from "@/lib/supabase/client"
 import { formatCurrency } from "@/lib/utils"
+import Link from "next/link"
 
 // Define a type for our product for better type safety
 type Product = {
@@ -15,10 +16,11 @@ type Product = {
   description: string;
   price: number;
   original_price?: number;
-  image: string;
+  image_url: string;
   rating: number;
-  reviews: number;
+  reviews_count: number;
   badge: string;
+  stock: number;
 };
 
 export function FeaturedProducts() {
@@ -32,13 +34,13 @@ export function FeaturedProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .limit(4); // Let's limit to 4 featured products
+        .limit(4);
 
       if (error) {
         console.error("Error fetching products:", error);
         setLoading(false);
       } else {
-        setProducts(data);
+        setProducts(data as Product[]);
         setLoading(false);
       }
     };
@@ -83,43 +85,44 @@ export function FeaturedProducts() {
         {/* Desktop Grid */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <Card
-              key={product.id}
-              className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20"
-            >
-              <CardContent className="p-0">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.name}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.badge}</Badge>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{product.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>
-                  <div className="flex items-center mb-3">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-primary text-primary" />
-                      <span className="ml-1 text-sm font-medium">{product.rating}</span>
-                    </div>
-                    <span className="text-muted-foreground text-sm ml-2">({product.reviews})</span>
+            <Link href={`/productos/${product.id}`} key={product.id} className="block">
+              <Card
+                className="group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20"
+              >
+                <CardContent className="p-0 flex-grow">
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={product.image_url || "/placeholder.svg"}
+                      alt={product.name}
+                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.badge}</Badge>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-lg text-foreground">{formatCurrency(product.price)}</span>
-                      {product.original_price && (
-                        <span className="text-muted-foreground line-through text-sm">{formatCurrency(product.original_price)}</span>
-                      )}
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{product.name}</h3>
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow">{product.description}</p>
+                    <div className="flex items-center mb-3">
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 fill-primary text-primary" />
+                        <span className="ml-1 text-sm font-medium">{product.rating}</span>
+                      </div>
+                      <span className="text-muted-foreground text-sm ml-2">({product.reviews_count} reseñas)</span>
                     </div>
-                    <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                      Añadir
-                    </Button>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-lg text-foreground">{formatCurrency(product.price)}</span>
+                         {product.original_price && (
+                          <span className="text-muted-foreground line-through text-sm">{formatCurrency(product.original_price)}</span>
+                        )}
+                      </div>
+                      <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                        Añadir
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
@@ -132,44 +135,46 @@ export function FeaturedProducts() {
             >
               {products.map((product) => (
                 <div key={product.id} className="w-full flex-shrink-0 px-4">
-                  <Card className="group hover:shadow-lg transition-all duration-300 border-border/50">
-                    <CardContent className="p-0">
-                      <div className="relative overflow-hidden rounded-t-lg">
-                        <img
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          className="w-full h-64 object-cover"
-                        />
-                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                          {product.badge}
-                        </Badge>
-                      </div>
-                      <div className="p-6">
-                        <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{product.name}</h3>
-                        <p className="text-muted-foreground text-sm mb-3">{product.description}</p>
-                        <div className="flex items-center mb-3">
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 fill-primary text-primary" />
-                            <span className="ml-1 text-sm font-medium">{product.rating}</span>
-                          </div>
-                          <span className="text-muted-foreground text-sm ml-2">({product.reviews})</span>
+                   <Link href={`/productos/${product.id}`} className="block">
+                    <Card className="group hover:shadow-lg transition-all duration-300 border-border/50">
+                      <CardContent className="p-0">
+                        <div className="relative overflow-hidden rounded-t-lg">
+                          <img
+                            src={product.image_url || "/placeholder.svg"}
+                            alt={product.name}
+                            className="w-full h-64 object-cover"
+                          />
+                          <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                            {product.badge}
+                          </Badge>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <span className="font-bold text-lg text-foreground">{formatCurrency(product.price)}</span>
-                            {product.original_price && (
-                              <span className="text-muted-foreground line-through text-sm">
-                                {formatCurrency(product.original_price)}
-                              </span>
-                            )}
+                        <div className="p-6">
+                          <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{product.name}</h3>
+                          <p className="text-muted-foreground text-sm mb-3">{product.description}</p>
+                          <div className="flex items-center mb-3">
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-primary text-primary" />
+                              <span className="ml-1 text-sm font-medium">{product.rating}</span>
+                            </div>
+                            <span className="text-muted-foreground text-sm ml-2">({product.reviews_count} reseñas)</span>
                           </div>
-                          <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                            Añadir
-                          </Button>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-bold text-lg text-foreground">{formatCurrency(product.price)}</span>
+                               {product.original_price && (
+                                <span className="text-muted-foreground line-through text-sm">
+                                  {formatCurrency(product.original_price)}
+                                </span>
+                              )}
+                            </div>
+                            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                              Añadir
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </div>
               ))}
             </div>

@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
@@ -17,10 +16,11 @@ type Product = {
   description: string;
   price: number;
   original_price?: number;
-  image: string;
+  image_url: string;
   rating: number;
-  reviews: number;
+  reviews_count: number;
   badge: string;
+  stock: number;
 };
 
 export default async function SearchPage({
@@ -97,7 +97,7 @@ export default async function SearchPage({
                 <CardContent className="p-0 flex flex-col flex-grow">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <img
-                      src={product.image || '/placeholder.svg'}
+                      src={product.image_url || '/placeholder.svg'}
                       alt={product.name}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -113,7 +113,7 @@ export default async function SearchPage({
                         <Star className="h-4 w-4 fill-primary text-primary" />
                         <span className="ml-1 text-sm font-medium">{product.rating}</span>
                       </div>
-                      <span className="text-muted-foreground text-sm ml-2">({product.reviews} reseñas)</span>
+                      <span className="text-muted-foreground text-sm ml-2">({product.reviews_count} reseñas)</span>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex items-center space-x-2">

@@ -36,7 +36,7 @@ export default async function AdminPage() {
   } = await supabaseAdmin.auth.admin.listUsers();
   const { data: products, error: productsError } = await supabase
     .from("products")
-    .select("id, name");
+    .select("id, name, price");
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("id, role");
@@ -129,6 +129,9 @@ export default async function AdminPage() {
                       <th scope="col" className="px-6 py-3">
                         Producto
                       </th>
+                      <th scope="col" className="px-6 py-3">
+                        Precio
+                      </th>
                       <th scope="col" className="px-6 py-3 text-right">
                         Acciones
                       </th>
@@ -139,6 +142,9 @@ export default async function AdminPage() {
                       <tr key={p.id} className="border-b">
                         <td className="px-6 py-4 font-medium text-foreground whitespace-nowrap">
                           {p.name}
+                        </td>
+                        <td className="px-6 py-4">
+                          {formatCurrency(p.price)}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end space-x-2">

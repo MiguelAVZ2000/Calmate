@@ -34,6 +34,8 @@ export default async function NewProductPage() {
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     const imageFile = formData.get("image_file") as File;
+    const price = formData.get("price") as string;
+    const stock = formData.get("stock") as string;
 
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
@@ -58,23 +60,19 @@ export default async function NewProductPage() {
       imageUrl = publicUrlData.publicUrl;
     }
 
-    const { data: newProduct, error: insertError } = await supabase
-      .from("products")
-      .insert({
-        name,
-        description,
-        image_url: imageUrl,
-      })
-      .select("id")
-      .single();
+    const { error: insertError } = await supabase.from("products").insert({
+      name,
+      description,
+      image_url: imageUrl,
+      price: parseFloat(price),
+      stock: parseInt(stock, 10),
+    });
 
-    if (insertError || !newProduct) {
+    if (insertError) {
       console.error("Error creating product:", insertError);
-      // Handle error appropriately, maybe redirect back with an error message
       redirect("/admin?error=product_creation_failed");
     } else {
-      // Redirect to the edit page for the new product to add variants
-      redirect(`/admin/products/${newProduct.id}/edit`);
+      redirect(`/admin`);
     }
   }
 
@@ -85,12 +83,11 @@ export default async function NewProductPage() {
         <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl font-bold font-serif text-foreground mb-8">
-              Paso 1: Añadir Nuevo Producto
+              Añadir Nuevo Producto
             </h1>
             <p className="text-muted-foreground mb-6">
-              Primero, crea el producto base con su nombre, descripción e imagen.
-              Después de crearlo, serás redirigido para añadir las variantes de
-              peso, precio y stock.
+              Crea un producto nuevo con su nombre, descripción, imagen, precio y
+              stock.
             </p>
             <form action={createProduct}>
               <div className="space-y-6">
@@ -102,6 +99,22 @@ export default async function NewProductPage() {
                   <Label htmlFor="description">Descripción</Label>
                   <Textarea id="description" name="description" required />
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Precio</Label>
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stock">Stock</Label>
+                    <Input id="stock" name="stock" type="number" required />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="image_file">Imagen del Producto</Label>
                   <Input id="image_file" name="image_file" type="file" />
@@ -112,7 +125,7 @@ export default async function NewProductPage() {
                       Cancelar
                     </Button>
                   </Link>
-                  <Button type="submit">Crear y Añadir Variantes</Button>
+                  <Button type="submit">Crear Producto</Button>
                 </div>
               </div>
             </form>
