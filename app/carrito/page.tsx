@@ -1,5 +1,5 @@
 import { Header } from "@/components/header"
-import { ShoppingCart } from "@/components/shopping-cart"
+import { ShoppingCart } from "@/components/cart/shopping-cart"
 import { Footer } from "@/components/footer"
 
 export default function CartPage() {

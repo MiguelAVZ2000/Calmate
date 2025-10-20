@@ -8,8 +8,8 @@ import { Star, Minus, Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
-import { ProductReviews } from "@/components/product-reviews";
-import { ReviewForm } from "@/components/review-form";
+import { ProductReviews } from "@/components/product/product-reviews";
+import { ReviewForm } from "@/components/product/review-form";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 

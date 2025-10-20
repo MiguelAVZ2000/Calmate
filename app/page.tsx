@@ -1,6 +1,6 @@
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
-import { FeaturedProducts } from "@/components/featured-products"
+import { FeaturedProducts } from "@/components/product/featured-products"
 import { OurStory } from "@/components/our-story"
 import { Footer } from "@/components/footer"
 

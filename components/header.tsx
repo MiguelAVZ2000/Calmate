@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
 import { useSupabase } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
@@ -65,7 +65,9 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <SearchInput />
+            <Suspense fallback={<div className="h-9 w-[300px] bg-muted rounded-md"/>}>
+              <SearchInput />
+            </Suspense>
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold p-2 rounded-md hover:bg-accent">
@@ -114,7 +116,9 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <SearchInput />
+              <Suspense fallback={<div className="h-9 w-full bg-muted rounded-md"/>}>
+                <SearchInput />
+              </Suspense>
             </div>
             <nav className="flex flex-col space-y-4 mt-4">
               <Link href="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold" onClick={() => setIsMenuOpen(false)}>
@@ -165,7 +169,7 @@ export function Header() {
                 <Link href="/carrito" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="ghost" size="icon" className="text-foreground hover:text-primary relative">
                     <ShoppingBag className="h-5 w-5" />
-                    {totalItems > <strong>0</strong> && (
+                    {totalItems > 0 && (
                       <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                         {totalItems}
                       </span>

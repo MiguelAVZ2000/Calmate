@@ -5,11 +5,12 @@ import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
-import { AddToCartButton } from '@/components/add-to-cart-button';
+import { AddToCartButton } from '@/components/cart/add-to-cart-button';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
-import { ProductFilters } from '@/components/product-filters';
+import { ProductFilters } from '@/components/product/product-filters';
 import Image from 'next/image';
+import { Suspense } from 'react';
 
 type Product = {
   id: number;
@@ -23,6 +24,15 @@ type Product = {
   badge: string;
   stock: number;
 };
+
+function FiltersSkeleton() {
+  return (
+    <div className="flex flex-col md:flex-row gap-4 mb-8">
+      <div className="flex-1 h-10 bg-muted rounded-md" />
+      <div className="flex-1 h-10 bg-muted rounded-md" />
+    </div>
+  )
+}
 
 export default async function SearchPage({
   searchParams,
@@ -77,7 +87,9 @@ export default async function SearchPage({
           </p>
         </div>
 
-        <ProductFilters />
+        <Suspense fallback={<FiltersSkeleton />}>
+          <ProductFilters />
+        </Suspense>
 
         {error && (
           <div className="text-center text-red-500">
