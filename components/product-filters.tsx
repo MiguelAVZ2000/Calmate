@@ -21,7 +21,7 @@ export function ProductFilters() {
       }
     }
     fetchBadges()
-  }, [])
+  }, [supabase])
 
   const handleFilterChange = (type: 'sort' | 'badge', value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()))

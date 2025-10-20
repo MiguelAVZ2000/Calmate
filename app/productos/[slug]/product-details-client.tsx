@@ -10,6 +10,8 @@ import { useCart } from "@/hooks/useCart";
 import { toast } from "sonner";
 import { ProductReviews } from "@/components/product-reviews";
 import { ReviewForm } from "@/components/review-form";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 // Simplified Product Type
 type Product = {
@@ -22,7 +24,7 @@ type Product = {
   rating: number;
   reviews_count: number;
   badge: string;
-  stock: number; // This is the stock in base weight units (e.g., 50g units)
+  stock: number; // This is the stock in base weight units (e.g., 100g units)
 };
 
 type Review = {
@@ -33,8 +35,9 @@ type Review = {
   user: { id: string; email: string } | null;
 };
 
-const WEIGHT_OPTIONS = [50, 100, 200, 500]; // Available weights in grams
-const BASE_WEIGHT = 50; // The base weight for the product.price
+const WEIGHT_OPTIONS = [100, 200, 500]; // Available weights in grams
+const BASE_WEIGHT = 100; // The base weight for the product.price (e.g., 100g)
+const STOCK_BASE_WEIGHT = 100; // The base weight for stock calculation
 
 export function ProductDetailsClient({ product, reviews }: { product: Product, reviews: Review[] }) {
   const { addToCart } = useCart();
@@ -52,7 +55,7 @@ export function ProductDetailsClient({ product, reviews }: { product: Product, r
   const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   // Calculate stock availability based on selected weight and quantity
-  const requiredStockUnits = (selectedWeight / BASE_WEIGHT) * quantity;
+  const requiredStockUnits = (selectedWeight / STOCK_BASE_WEIGHT) * quantity;
   const isStockAvailable = product.stock >= requiredStockUnits;
 
   const handleAddToCart = () => {
@@ -82,7 +85,7 @@ export function ProductDetailsClient({ product, reviews }: { product: Product, r
         {/* Product Images */}
         <div className="space-y-4">
           <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-            <img src={product.image_url || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
+            <Image src={product.image_url || "/placeholder.svg"} alt={product.name} width={800} height={800} className="w-full h-full object-cover" />
           </div>
         </div>
 

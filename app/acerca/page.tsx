@@ -3,6 +3,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Leaf, Award, Globe, Heart, Users, Mountain, Clock } from "lucide-react"
+import Image from "next/image"
 
 export default function AboutPage() {
   return (
@@ -40,7 +41,7 @@ export default function AboutPage() {
                     combinando la robustez del Ceylán con la audacia del maqui y la calma del boldo.
                   </p>
                   <p className="text-pretty">
-                    Lo que empezó como un pasatiempo para calmar el alma (de ahí "Calmoté"), rápidamente se convirtió en
+                    Lo que empezó como un pasatiempo para calmar el alma (de ahí &quot;Calmoté&quot;), rápidamente se convirtió en
                     un tesoro local. Los vecinos quedaban maravillados con sus infusiones, que ofrecían un refugio de
                     sabor y bienestar. Con el tiempo, la familia continuó el legado, explorando la Patagonia en busca de
                     nuevos ingredientes y perfeccionando las recetas de Amalia.
@@ -53,10 +54,12 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="relative">
-                <img
+                <Image
                   src="/southern-chile-landscape-with-tea-elements.jpg" // Placeholder for a more relevant image
                   alt="Historia de Calmoté - Fundada en el sur de Chile"
-                  className="w-full rounded-lg shadow-lg"
+                  width={1200}
+                  height={800}
+                  className="w-full h-auto rounded-lg shadow-lg"
                 />
                 <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground p-6 rounded-lg shadow-lg">
                   <div className="text-center">

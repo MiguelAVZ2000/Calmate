@@ -141,9 +141,11 @@ export function ShoppingCart() {
                   <span className="text-primary">{formatCurrency(total)}</span>
                 </div>
 
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 mt-6">
-                  Proceder al Pago
-                </Button>
+                <Link href="/checkout" className="w-full">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 mt-6">
+                    Proceder al Pago
+                  </Button>
+                </Link>
 
                 <Link href="/productos" className="w-full inline-block">
                   <Button variant="outline" className="w-full bg-transparent">

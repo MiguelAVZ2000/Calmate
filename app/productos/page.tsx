@@ -9,6 +9,7 @@ import { AddToCartButton } from '@/components/add-to-cart-button';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProductFilters } from '@/components/product-filters';
+import Image from 'next/image';
 
 type Product = {
   id: number;
@@ -96,9 +97,11 @@ export default async function SearchPage({
               <Card className="group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
                 <CardContent className="p-0 flex flex-col flex-grow">
                   <div className="relative overflow-hidden rounded-t-lg">
-                    <img
+                    <Image
                       src={product.image_url || '/placeholder.svg'}
                       alt={product.name}
+                      width={400}
+                      height={256}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {product.badge && (

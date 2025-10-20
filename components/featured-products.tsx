@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { formatCurrency } from "@/lib/utils"
 import Link from "next/link"
+import Image from "next/image"
 
 // Define a type for our product for better type safety
 type Product = {
@@ -46,7 +47,7 @@ export function FeaturedProducts() {
     };
 
     fetchProducts();
-  }, []);
+  }, [supabase]);
 
   const nextSlide = () => {
     if (products.length === 0) return;
@@ -91,9 +92,11 @@ export function FeaturedProducts() {
               >
                 <CardContent className="p-0 flex-grow">
                   <div className="relative overflow-hidden rounded-t-lg">
-                    <img
+                    <Image
                       src={product.image_url || "/placeholder.svg"}
                       alt={product.name}
+                      width={400}
+                      height={256}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.badge}</Badge>
@@ -139,9 +142,11 @@ export function FeaturedProducts() {
                     <Card className="group hover:shadow-lg transition-all duration-300 border-border/50">
                       <CardContent className="p-0">
                         <div className="relative overflow-hidden rounded-t-lg">
-                          <img
+                          <Image
                             src={product.image_url || "/placeholder.svg"}
                             alt={product.name}
+                            width={400}
+                            height={256}
                             className="w-full h-64 object-cover"
                           />
                           <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Leaf, Award, Globe, Heart } from "lucide-react"
+import Image from "next/image"
 
 export function OurStory() {
   return (
@@ -66,9 +67,11 @@ Desde 1892, Calmaté ha sido sinónimo de excelencia en el mundo del té. Fundad
           {/* Image */}
           <div className="relative">
             <div className="aspect-square rounded-lg overflow-hidden">
-              <img
+              <Image
                 src="/traditional-tea-plantation-workers-carefully-picki.jpg"
                 alt="Plantación de té tradicional"
+                width={800}
+                height={800}
                 className="w-full h-full object-cover"
               />
             </div>
