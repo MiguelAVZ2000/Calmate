@@ -106,12 +106,12 @@ export function Footer() {
                 <span className="text-muted-foreground text-sm">
                   Calle del Té, 123
                   <br />
-                  Madrid, España
+                  Santiago, Chile
                 </span>
               </li>
               <li className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground text-sm">+34 91 123 4567</span>
+                <span className="text-muted-foreground text-sm">+56 91 123 4567</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-primary" />
@@ -123,7 +123,7 @@ export function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 Calmate. Todos los derechos reservados. |
+            © 2025 Calmate. Todos los derechos reservados. |
             <Link href="/privacidad" className="hover:text-primary transition-colors ml-1">
               Política de Privacidad
             </Link>{" "}
