@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useCart, ProductVariant } from "@/hooks/useCart";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { useCart, ProductVariant } from '@/hooks/useCart';
+import { toast } from 'sonner';
 
 // El producto que viene del servidor tiene una estructura ligeramente diferente
 interface ServerProduct {
@@ -22,7 +22,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Evita la navegación del componente Link padre
-    
+
     const variant: ProductVariant = {
       productId: String(product.id),
       name: product.name,
@@ -37,8 +37,8 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
 
   return (
     <Button
-      size="sm"
-      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+      size='sm'
+      className='bg-primary hover:bg-primary/90 text-primary-foreground'
       onClick={handleAddToCart}
     >
       Añadir

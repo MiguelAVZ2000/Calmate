@@ -29,11 +29,11 @@ type Product = {
 
 function FiltersSkeleton() {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-8">
-      <div className="flex-1 h-10 bg-muted rounded-md" />
-      <div className="flex-1 h-10 bg-muted rounded-md" />
+    <div className='flex flex-col md:flex-row gap-4 mb-8'>
+      <div className='flex-1 h-10 bg-muted rounded-md' />
+      <div className='flex-1 h-10 bg-muted rounded-md' />
     </div>
-  )
+  );
 }
 
 export default async function SearchPage({
@@ -56,7 +56,9 @@ export default async function SearchPage({
     let queryBuilder = supabase.from('products').select('*, categories(name)');
 
     if (query) {
-      queryBuilder = queryBuilder.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
+      queryBuilder = queryBuilder.or(
+        `name.ilike.%${query}%,description.ilike.%${query}%`
+      );
     }
 
     if (category && category !== 'all') {
@@ -69,7 +71,7 @@ export default async function SearchPage({
       if (categoryError) {
         console.error('Error al obtener el ID de la categoría:', categoryError);
         throw categoryError;
-      } 
+      }
 
       if (categoryData) {
         queryBuilder = queryBuilder.eq('category_id', categoryData.id);
@@ -78,7 +80,9 @@ export default async function SearchPage({
 
     if (sort) {
       const [sortBy, sortOrder] = sort.split('-');
-      queryBuilder = queryBuilder.order(sortBy, { ascending: sortOrder === 'asc' });
+      queryBuilder = queryBuilder.order(sortBy, {
+        ascending: sortOrder === 'asc',
+      });
     } else {
       queryBuilder = queryBuilder.order('name', { ascending: true });
     }
@@ -90,22 +94,20 @@ export default async function SearchPage({
     }
 
     products = data as Product[];
-
   } catch (e) {
     console.error('Error en la consulta de productos (servidor):', e);
     error = e;
   }
 
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background'>
       <Header />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+      <main className='container mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+        <div className='text-center mb-12'>
+          <h1 className='font-serif text-3xl md:text-4xl font-bold text-foreground mb-4'>
             {query ? `Resultados para "${query}"` : 'Todos los Productos'}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
             Explora toda nuestra colección de tés y accesorios.
           </p>
         </div>
@@ -115,50 +117,71 @@ export default async function SearchPage({
         </Suspense>
 
         {error && (
-          <div className="text-center text-red-500">
-            <p>Hubo un error al cargar los productos. Por favor, intenta de nuevo más tarde.</p>
-            <p className="text-sm">{error.message}</p>
+          <div className='text-center text-red-500'>
+            <p>
+              Hubo un error al cargar los productos. Por favor, intenta de nuevo
+              más tarde.
+            </p>
+            <p className='text-sm'>{error.message}</p>
           </div>
         )}
 
         {!error && products.length === 0 && (
-          <div className="text-center text-muted-foreground">
+          <div className='text-center text-muted-foreground'>
             <p>No se encontraron productos que coincidan con tu búsqueda.</p>
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {products.map((product) => (
-            <Link href={`/productos/${product.id}`} key={product.id} className="block">
-              <Card className="group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-                <CardContent className="p-0 flex flex-col flex-grow">
-                  <div className="relative overflow-hidden rounded-t-lg">
+            <Link
+              href={`/productos/${product.id}`}
+              key={product.id}
+              className='block'
+            >
+              <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
+                <CardContent className='p-0 flex flex-col flex-grow'>
+                  <div className='relative overflow-hidden rounded-t-lg'>
                     <Image
                       src={product.image || '/placeholder.svg'}
                       alt={product.name}
                       width={400}
                       height={256}
-                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
                     />
                     {product.categories?.name && (
-                      <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.categories.name}</Badge>
+                      <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
+                        {product.categories.name}
+                      </Badge>
                     )}
                   </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="font-serif text-xl font-semibold text-foreground mb-2">{product.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow">{product.description}</p>
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-primary text-primary" />
-                        <span className="ml-1 text-sm font-medium">{product.rating}</span>
+                  <div className='p-6 flex flex-col flex-grow'>
+                    <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
+                      {product.name}
+                    </h3>
+                    <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
+                      {product.description}
+                    </p>
+                    <div className='flex items-center mb-3'>
+                      <div className='flex items-center'>
+                        <Star className='h-4 w-4 fill-primary text-primary' />
+                        <span className='ml-1 text-sm font-medium'>
+                          {product.rating}
+                        </span>
                       </div>
-                      <span className="text-muted-foreground text-sm ml-2">({product.reviews} reseñas)</span>
+                      <span className='text-muted-foreground text-sm ml-2'>
+                        ({product.reviews} reseñas)
+                      </span>
                     </div>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-bold text-lg text-foreground">{formatCurrency(product.price)}</span>
+                    <div className='flex items-center justify-between mt-auto'>
+                      <div className='flex items-center space-x-2'>
+                        <span className='font-bold text-lg text-foreground'>
+                          {formatCurrency(product.price)}
+                        </span>
                         {product.original_price && (
-                          <span className="text-muted-foreground line-through text-sm">{formatCurrency(product.original_price)}</span>
+                          <span className='text-muted-foreground line-through text-sm'>
+                            {formatCurrency(product.original_price)}
+                          </span>
                         )}
                       </div>
                       <AddToCartButton product={product} />

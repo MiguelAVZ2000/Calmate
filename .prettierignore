@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+
+# Next.js build output
+.next/
+
+# Production build
+dist/
+
+# Environment files
+.env.local
+.env.*.local
+
+# Lockfiles
+package-lock.json
+pnpm-lock.yaml
+
+# Optional
+public/

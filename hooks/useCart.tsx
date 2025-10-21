@@ -1,5 +1,5 @@
-"use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+'use client';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 // Interface for the product variant being added to the cart
 export interface ProductVariant {
@@ -30,7 +30,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };
@@ -82,7 +82,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, updateItemQuantity, clearCart }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateItemQuantity,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

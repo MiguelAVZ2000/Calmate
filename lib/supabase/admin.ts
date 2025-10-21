@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Asegúrate de que estas variables de entorno estén disponibles en el entorno del servidor
