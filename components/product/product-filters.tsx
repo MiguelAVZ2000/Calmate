@@ -3,27 +3,36 @@
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { createClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
+
+type Category = {
+  id: number
+  name: string
+  slug: string
+}
 
 export function ProductFilters() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [badges, setBadges] = useState<string[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const supabase = createClient()
 
   useEffect(() => {
-    async function fetchBadges() {
-      const { data, error } = await supabase.from('products').select('badge')
+    async function fetchCategories() {
+      const { data, error } = await supabase.from('categories').select('id, name, slug').order('name', { ascending: true })
+      console.log('Respuesta de Supabase para categorías:', { data, error });
       if (data) {
-        const uniqueBadges = [...new Set(data.map(item => item.badge).filter(Boolean))] as string[]
-        setBadges(uniqueBadges)
+        setCategories(data)
+      }
+      if (error) {
+        console.error('Error al obtener las categorías:', error)
       }
     }
-    fetchBadges()
+    fetchCategories()
   }, [supabase])
 
-  const handleFilterChange = (type: 'sort' | 'badge', value: string) => {
+  const handleFilterChange = (type: 'sort' | 'category', value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()))
 
     if (!value || value === 'all') {
@@ -37,6 +46,8 @@ export function ProductFilters() {
 
     router.push(`${pathname}${query}`)
   }
+
+  console.log('Renderizando ProductFilters, categorías:', categories);
 
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -53,14 +64,14 @@ export function ProductFilters() {
         </Select>
       </div>
       <div className="flex-1">
-        <Select onValueChange={(value) => handleFilterChange('badge', value)} defaultValue={searchParams.get('badge') || ''}>
+        <Select onValueChange={(value) => handleFilterChange('category', value)} defaultValue={searchParams.get('category') || ''}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Filtrar por etiqueta" />
+            <SelectValue placeholder="Filtrar por categoría" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todas las etiquetas</SelectItem>
-            {badges.map(badge => (
-              <SelectItem key={badge} value={badge}>{badge}</SelectItem>
+            <SelectItem value="all">Todas las categorías</SelectItem>
+            {categories.map(category => (
+              <SelectItem key={category.id} value={category.slug}>{category.name}</SelectItem>
             ))}
           </SelectContent>
         </Select>

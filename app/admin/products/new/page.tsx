@@ -8,6 +8,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 export default async function NewProductPage() {
@@ -28,6 +29,8 @@ export default async function NewProductPage() {
     redirect("/");
   }
 
+  const { data: categories } = await supabase.from('categories').select('id, name');
+
   async function createProduct(formData: FormData) {
     "use server";
 
@@ -36,6 +39,7 @@ export default async function NewProductPage() {
     const imageFile = formData.get("image_file") as File;
     const price = formData.get("price") as string;
     const stock = formData.get("stock") as string;
+    const category_id = formData.get("category_id") as string;
 
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
@@ -63,9 +67,10 @@ export default async function NewProductPage() {
     const { error: insertError } = await supabase.from("products").insert({
       name,
       description,
-      image_url: imageUrl,
+      image: imageUrl,
       price: parseFloat(price),
       stock: parseInt(stock, 10),
+      category_id: parseInt(category_id, 10),
     });
 
     if (insertError) {
@@ -114,6 +119,21 @@ export default async function NewProductPage() {
                     <Label htmlFor="stock">Stock</Label>
                     <Input id="stock" name="stock" type="number" required />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category_id">Categoría</Label>
+                  <Select name="category_id">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={String(category.id)}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="image_file">Imagen del Producto</Label>

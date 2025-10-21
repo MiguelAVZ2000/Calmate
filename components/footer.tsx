@@ -64,7 +64,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/productos/te-negro"
+                  href="/productos?category=te-negro"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
                 >
                   Té Negro
@@ -72,7 +72,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/productos/te-verde"
+                  href="/productos?category=te-verde"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
                 >
                   Té Verde
@@ -80,7 +80,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/productos/oolong"
+                  href="/productos?category=oolong"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
                 >
                   Oolong
@@ -88,7 +88,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/productos/infusiones"
+                  href="/productos?category=infusiones"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
                 >
                   Infusiones

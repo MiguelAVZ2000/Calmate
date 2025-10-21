@@ -18,11 +18,13 @@ type Product = {
   description: string;
   price: number;
   original_price?: number;
-  image_url: string;
+  image: string;
   rating: number;
-  reviews_count: number;
-  badge: string;
+  reviews: number;
   stock: number;
+  categories: {
+    name: string;
+  } | null;
 };
 
 function FiltersSkeleton() {
@@ -43,36 +45,57 @@ export default async function SearchPage({
   const supabase = createClient(cookieStore);
   const query = searchParams?.q as string | undefined;
   const sort = searchParams?.sort as string | undefined;
-  const badge = searchParams?.badge as string | undefined;
+  const category = searchParams?.category as string | undefined;
+
+  console.log('Filtrando por categoría (servidor):', category);
 
   let products: Product[] = [];
   let error: any = null;
 
-  let queryBuilder = supabase.from('products').select('*');
+  try {
+    let queryBuilder = supabase.from('products').select('*, categories(name)');
 
-  if (query) {
-    queryBuilder = queryBuilder.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
-  }
+    if (query) {
+      queryBuilder = queryBuilder.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
+    }
 
-  if (badge && badge !== 'all') {
-    queryBuilder = queryBuilder.eq('badge', badge);
-  }
+    if (category && category !== 'all') {
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', category)
+        .single();
 
-  if (sort) {
-    const [sortBy, sortOrder] = sort.split('-');
-    queryBuilder = queryBuilder.order(sortBy, { ascending: sortOrder === 'asc' });
-  } else {
-    // Default sort
-    queryBuilder = queryBuilder.order('name', { ascending: true });
-  }
+      if (categoryError) {
+        console.error('Error al obtener el ID de la categoría:', categoryError);
+        throw categoryError;
+      } 
 
-  const { data, error: queryError } = await queryBuilder;
+      if (categoryData) {
+        queryBuilder = queryBuilder.eq('category_id', categoryData.id);
+      }
+    }
 
-  if (queryError) {
-    error = queryError;
-  } else {
+    if (sort) {
+      const [sortBy, sortOrder] = sort.split('-');
+      queryBuilder = queryBuilder.order(sortBy, { ascending: sortOrder === 'asc' });
+    } else {
+      queryBuilder = queryBuilder.order('name', { ascending: true });
+    }
+
+    const { data, error: queryError } = await queryBuilder;
+
+    if (queryError) {
+      throw queryError;
+    }
+
     products = data as Product[];
+
+  } catch (e) {
+    console.error('Error en la consulta de productos (servidor):', e);
+    error = e;
   }
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,6 +117,7 @@ export default async function SearchPage({
         {error && (
           <div className="text-center text-red-500">
             <p>Hubo un error al cargar los productos. Por favor, intenta de nuevo más tarde.</p>
+            <p className="text-sm">{error.message}</p>
           </div>
         )}
 
@@ -110,14 +134,14 @@ export default async function SearchPage({
                 <CardContent className="p-0 flex flex-col flex-grow">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <Image
-                      src={product.image_url || '/placeholder.svg'}
+                      src={product.image || '/placeholder.svg'}
                       alt={product.name}
                       width={400}
                       height={256}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {product.badge && (
-                      <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.badge}</Badge>
+                    {product.categories?.name && (
+                      <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">{product.categories.name}</Badge>
                     )}
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
@@ -128,7 +152,7 @@ export default async function SearchPage({
                         <Star className="h-4 w-4 fill-primary text-primary" />
                         <span className="ml-1 text-sm font-medium">{product.rating}</span>
                       </div>
-                      <span className="text-muted-foreground text-sm ml-2">({product.reviews_count} reseñas)</span>
+                      <span className="text-muted-foreground text-sm ml-2">({product.reviews} reseñas)</span>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex items-center space-x-2">

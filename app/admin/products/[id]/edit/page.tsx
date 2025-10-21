@@ -10,6 +10,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 export default async function EditProductPage({ params, searchParams }: { params: { id: string }, searchParams: { [key: string]: string | string[] | undefined } }) {
@@ -29,19 +30,28 @@ export default async function EditProductPage({ params, searchParams }: { params
     redirect("/admin");
   }
 
+  const { data: categories } = await supabase.from('categories').select('id, name');
+
   async function updateProduct(formData: FormData) {
     "use server";
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     const priceString = formData.get("price") as string;
     const stockString = formData.get("stock") as string;
+    const category_id = formData.get("category_id") as string;
     const imageFile = formData.get("image_file") as File;
     const supabase = createClient(cookies());
 
     const price = priceString ? parseFloat(priceString) : 0;
     const stock = stockString ? parseInt(stockString, 10) : 0;
 
-    const updateData: { [key: string]: any } = { name, description, price, stock };
+    const updateData: { [key: string]: any } = { 
+      name, 
+      description, 
+      price, 
+      stock, 
+      category_id: parseInt(category_id, 10)
+    };
 
     if (imageFile && imageFile.size > 0) {
       const newFilePath = `public/${Date.now()}-${imageFile.name}`;
@@ -51,9 +61,9 @@ export default async function EditProductPage({ params, searchParams }: { params
         return;
       }
       const { data: publicUrlData } = supabase.storage.from("product-images").getPublicUrl(newFilePath);
-      updateData.image_url = publicUrlData.publicUrl;
+      updateData.image = publicUrlData.publicUrl;
 
-      const imageUrl = product.image_url;
+      const imageUrl = product.image;
       if (typeof imageUrl === 'string' && imageUrl.includes('/product-images/')) {
         const oldFilePath = imageUrl.split("/product-images/").pop();
         if (oldFilePath) {
@@ -119,8 +129,24 @@ export default async function EditProductPage({ params, searchParams }: { params
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="category_id">Categoría</Label>
+                  <Select name="category_id" defaultValue={String(product.category_id)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem key={category.id} value={String(category.id)}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
                   <Label>Imagen Actual</Label>
-                  {product.image_url ? <Image src={product.image_url} alt={product.name} width={200} height={200} className="rounded-md object-cover" /> : <p className="text-sm text-muted-foreground">No hay imagen.</p>}
+                  {product.image ? <Image src={product.image} alt={product.name} width={200} height={200} className="rounded-md object-cover" /> : <p className="text-sm text-muted-foreground">No hay imagen.</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="image_file">Subir nueva imagen (opcional)</Label>
