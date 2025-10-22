@@ -1,6 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/client';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +11,8 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProductFilters } from '@/components/product/product-filters';
 import Image from 'next/image';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 type Product = {
   id: number;
@@ -27,77 +29,90 @@ type Product = {
   } | null;
 };
 
-function FiltersSkeleton() {
+function ProductsSkeleton() {
   return (
-    <div className='flex flex-col md:flex-row gap-4 mb-8'>
-      <div className='flex-1 h-10 bg-muted rounded-md' />
-      <div className='flex-1 h-10 bg-muted rounded-md' />
+    <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Card key={i} className='h-full flex flex-col'>
+          <div className='relative w-full h-64 bg-muted rounded-t-lg'></div>
+          <div className='p-6 flex flex-col flex-grow'>
+            <div className='h-6 w-3/4 bg-muted rounded mb-2'></div>
+            <div className='h-10 w-full bg-muted rounded mb-3'></div>
+            <div className='h-5 w-1/2 bg-muted rounded mb-3'></div>
+            <div className='flex items-center justify-between mt-auto'>
+              <div className='h-7 w-1/4 bg-muted rounded'></div>
+              <div className='h-9 w-1/4 bg-muted rounded'></div>
+            </div>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const query = searchParams?.q as string | undefined;
-  const sort = searchParams?.sort as string | undefined;
-  const category = searchParams?.category as string | undefined;
+function SearchPageComponent() {
+  const searchParams = useSearchParams();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  console.log('Filtrando por categoría (servidor):', category);
+  const query = searchParams.get('q');
+  const sort = searchParams.get('sort');
+  const category = searchParams.get('category');
 
-  let products: Product[] = [];
-  let error: any = null;
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    try {
+      let queryBuilder = supabase
+        .from('products')
+        .select('*, categories(name)');
 
-  try {
-    let queryBuilder = supabase.from('products').select('*, categories(name)');
-
-    if (query) {
-      queryBuilder = queryBuilder.or(
-        `name.ilike.%${query}%,description.ilike.%${query}%`
-      );
-    }
-
-    if (category && category !== 'all') {
-      const { data: categoryData, error: categoryError } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('slug', category)
-        .single();
-
-      if (categoryError) {
-        console.error('Error al obtener el ID de la categoría:', categoryError);
-        throw categoryError;
+      if (query) {
+        queryBuilder = queryBuilder.or(
+          `name.ilike.%${query}%,description.ilike.%${query}%`
+        );
       }
 
-      if (categoryData) {
-        queryBuilder = queryBuilder.eq('category_id', categoryData.id);
+      if (category && category !== 'all') {
+        const { data: categoryData, error: categoryError } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('slug', category)
+          .single();
+
+        if (categoryError) throw categoryError;
+        if (categoryData) {
+          queryBuilder = queryBuilder.eq('category_id', categoryData.id);
+        }
       }
+
+      if (sort) {
+        const [sortBy, sortOrder] = sort.split('-');
+        queryBuilder = queryBuilder.order(sortBy, {
+          ascending: sortOrder === 'asc',
+        });
+      } else {
+        queryBuilder = queryBuilder.order('name', { ascending: true });
+      }
+
+      const { data, error: queryError } = await queryBuilder;
+
+      if (queryError) throw queryError;
+
+      setProducts(data as Product[]);
+    } catch (e) {
+      console.error('Error fetching products (client):', e);
+      setError(e);
+    } finally {
+      setLoading(false);
     }
+  }, [query, sort, category]);
 
-    if (sort) {
-      const [sortBy, sortOrder] = sort.split('-');
-      queryBuilder = queryBuilder.order(sortBy, {
-        ascending: sortOrder === 'asc',
-      });
-    } else {
-      queryBuilder = queryBuilder.order('name', { ascending: true });
-    }
-
-    const { data, error: queryError } = await queryBuilder;
-
-    if (queryError) {
-      throw queryError;
-    }
-
-    products = data as Product[];
-  } catch (e) {
-    console.error('Error en la consulta de productos (servidor):', e);
-    error = e;
-  }
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <div className='min-h-screen bg-background'>
@@ -112,12 +127,10 @@ export default async function SearchPage({
           </p>
         </div>
 
-        <Suspense fallback={<FiltersSkeleton />}>
-          <ProductFilters />
-        </Suspense>
+        <ProductFilters />
 
         {error && (
-          <div className='text-center text-red-500'>
+          <div className='text-center text-red-500 my-8'>
             <p>
               Hubo un error al cargar los productos. Por favor, intenta de nuevo
               más tarde.
@@ -126,74 +139,90 @@ export default async function SearchPage({
           </div>
         )}
 
-        {!error && products.length === 0 && (
-          <div className='text-center text-muted-foreground'>
+        {loading ? (
+          <ProductsSkeleton />
+        ) : products.length === 0 && !error ? (
+          <div className='text-center text-muted-foreground my-8'>
             <p>No se encontraron productos que coincidan con tu búsqueda.</p>
           </div>
-        )}
-
-        <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
-          {products.map((product) => (
-            <Link
-              href={`/productos/${product.id}`}
-              key={product.id}
-              className='block'
-            >
-              <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
-                <CardContent className='p-0 flex flex-col flex-grow'>
-                  <div className='relative overflow-hidden rounded-t-lg'>
-                    <Image
-                      src={product.image || '/placeholder.svg'}
-                      alt={product.name}
-                      width={400}
-                      height={256}
-                      className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
-                    />
-                    {product.categories?.name && (
-                      <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
-                        {product.categories.name}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className='p-6 flex flex-col flex-grow'>
-                    <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
-                      {product.name}
-                    </h3>
-                    <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
-                      {product.description}
-                    </p>
-                    <div className='flex items-center mb-3'>
-                      <div className='flex items-center'>
-                        <Star className='h-4 w-4 fill-primary text-primary' />
-                        <span className='ml-1 text-sm font-medium'>
-                          {product.rating}
-                        </span>
-                      </div>
-                      <span className='text-muted-foreground text-sm ml-2'>
-                        ({product.reviews} reseñas)
-                      </span>
+        ) : (
+          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
+            {products.map((product) => (
+              <Link
+                href={`/productos/${product.id}`}
+                key={product.id}
+                className='block'
+              >
+                <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
+                  <CardContent className='p-0 flex flex-col flex-grow'>
+                    <div className='relative overflow-hidden rounded-t-lg'>
+                      <Image
+                        src={product.image || '/placeholder.svg'}
+                        alt={product.name}
+                        width={400}
+                        height={256}
+                        className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
+                      />
+                      {product.categories?.name && (
+                        <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
+                          {product.categories.name}
+                        </Badge>
+                      )}
                     </div>
-                    <div className='flex items-center justify-between mt-auto'>
-                      <div className='flex items-center space-x-2'>
-                        <span className='font-bold text-lg text-foreground'>
-                          {formatCurrency(product.price)}
-                        </span>
-                        {product.original_price && (
-                          <span className='text-muted-foreground line-through text-sm'>
-                            {formatCurrency(product.original_price)}
+                    <div className='p-6 flex flex-col flex-grow'>
+                      <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
+                        {product.name}
+                      </h3>
+                      <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
+                        {product.description}
+                      </p>
+                      <div className='flex items-center mb-3'>
+                        <div className='flex items-center'>
+                          <Star className='h-4 w-4 fill-primary text-primary' />
+                          <span className='ml-1 text-sm font-medium'>
+                            {product.rating}
                           </span>
-                        )}
+                        </div>
+                        <span className='text-muted-foreground text-sm ml-2'>
+                          ({product.reviews} reseñas)
+                        </span>
                       </div>
-                      <AddToCartButton product={product} />
+                      <div className='flex items-center justify-between mt-auto'>
+                        <div className='flex items-center space-x-2'>
+                          <span className='font-bold text-lg text-foreground'>
+                            {formatCurrency(product.price)}
+                          </span>
+                          {product.original_price && (
+                            <span className='text-muted-foreground line-through text-sm'>
+                              {formatCurrency(product.original_price)}
+                            </span>
+                          )}
+                        </div>
+                        <AddToCartButton product={product} />
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className='min-h-screen bg-background flex items-center justify-center'>
+          Cargando página...
+        </div>
+      }
+    >
+      <SearchPageComponent />
+    </Suspense>
   );
 }

@@ -1,16 +1,35 @@
 import { test, expect } from '@playwright/test';
 
-test('should navigate to the home page and display the main content', async ({
+test('should display hero section content and navigate to products page', async ({
   page,
 }) => {
-  // Inicia la navegación a la raíz del sitio.
+  // 1. Navegar a la página de inicio.
   await page.goto('/');
 
-  // Espera a que el elemento <main> sea visible.
-  const mainElement = page.locator('main');
-  await expect(mainElement).toBeVisible();
+  // 2. Verificar el título de la página.
+  await expect(page).toHaveTitle(/Calmaté/i);
 
-  // Opcional: Verificar el título de la página.
-  // La expresión regular /Calmate/i hace que la búsqueda no distinga mayúsculas de minúsculas.
-  await expect(page).toHaveTitle(/Calmate/i);
+  // 3. Verificar que el encabezado principal (h1) esté visible y tenga el texto correcto.
+  const mainHeading = page.getByRole('heading', {
+    name: /La Excelencia del Té Redefinida/i,
+  });
+  await expect(mainHeading).toBeVisible();
+
+  // 4. Verificar que el párrafo de descripción esté visible.
+  const description = page.getByText(
+    /Descubre nuestra colección exclusiva de tés premium/i
+  );
+  await expect(description).toBeVisible();
+
+  // 5. Verificar que el botón "Explorar Colección" esté visible.
+  const exploreButton = page.getByRole('button', {
+    name: /Explorar Colección/i,
+  });
+  await expect(exploreButton).toBeVisible();
+
+  // 6. Hacer clic en el botón "Explorar Colección".
+  await exploreButton.click();
+
+  // 7. Verificar que la URL haya cambiado a la página de productos.
+  await expect(page).toHaveURL(/.*\/productos/);
 });
