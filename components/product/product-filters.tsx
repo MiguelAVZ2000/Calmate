@@ -30,7 +30,7 @@ export function ProductFilters() {
         .from('categories')
         .select('id, name, slug')
         .order('name', { ascending: true });
-      console.log('Respuesta de Supabase para categorías:', { data, error });
+
       if (data) {
         setCategories(data);
       }
@@ -55,8 +55,6 @@ export function ProductFilters() {
 
     router.push(`${pathname}${query}`);
   };
-
-  console.log('Renderizando ProductFilters, categorías:', categories);
 
   return (
     <div className='flex flex-col md:flex-row gap-4 mb-8'>

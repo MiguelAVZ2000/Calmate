@@ -77,9 +77,39 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local.
     npm run db:seed
     ```
 
+## 🧪 Testing
+
+Este proyecto utiliza una estrategia de testing dual para asegurar la calidad y estabilidad del código:
+
+### 1. Pruebas Unitarias y de Componentes (Jest)
+
+-   **Tecnologías**: [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
+-   **Ubicación**: Los archivos de prueba se encuentran en carpetas `__tests__` dentro de los directorios `app` y `components`, junto a los archivos que prueban.
+-   **Propósito**: Verificar que los componentes individuales y las funciones de lógica de negocio se comportan como se espera de forma aislada.
+
+Para ejecutar estas pruebas, usa el siguiente comando:
+
+```bash
+npm run test:unit
+```
+
+### 2. Pruebas End-to-End (Playwright)
+
+-   **Tecnología**: [Playwright](https://playwright.dev/).
+-   **Ubicación**: Los archivos de prueba están en la carpeta `e2e/` en la raíz del proyecto.
+-   **Propósito**: Simular flujos de usuario completos en un navegador real para garantizar que la aplicación funciona correctamente de principio a fin.
+
+Para ejecutar estas pruebas, usa el siguiente comando:
+
+```bash
+npm run test:e2e
+```
+
 ## 📜 Scripts Disponibles
 
 - `npm run dev`: Inicia la aplicación en modo de desarrollo.
 - `npm run build`: Compila la aplicación para producción.
 - `npm run start`: Inicia un servidor de producción.
 - `npm run lint`: Ejecuta el linter (ESLint) para analizar el código.
+- `npm run test:unit`: Ejecuta las pruebas unitarias y de componentes.
+- `npm run test:e2e`: Ejecuta las pruebas End-to-End.
