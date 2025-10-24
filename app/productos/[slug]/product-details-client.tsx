@@ -51,6 +51,8 @@ export function ProductDetailsClient({
   const [selectedWeight, setSelectedWeight] = useState(WEIGHT_OPTIONS[0]);
   const [calculatedPrice, setCalculatedPrice] = useState(product.price);
 
+  const [selectedImage, setSelectedImage] = useState(product.image_url);
+
   useEffect(() => {
     // Recalculate price when selected weight or product changes
     const pricePerGram = product.price / BASE_WEIGHT;
@@ -96,12 +98,29 @@ export function ProductDetailsClient({
         <div className='space-y-4'>
           <div className='aspect-square rounded-lg overflow-hidden bg-muted'>
             <Image
-              src={product.image_url || '/placeholder.svg'}
+              src={selectedImage || '/placeholder.svg'}
               alt={product.name}
               width={800}
               height={800}
               className='w-full h-full object-cover'
             />
+          </div>
+          <div className='grid grid-cols-4 gap-4'>
+            {[product.image_url, ...(product.images || [])].map((image, index) => (
+              <div
+                key={index}
+                className={`aspect-square rounded-lg overflow-hidden cursor-pointer ${selectedImage === image ? 'ring-2 ring-primary' : ''}`}
+                onClick={() => setSelectedImage(image)}
+              >
+                <Image
+                  src={image || '/placeholder.svg'}
+                  alt={`${product.name} thumbnail ${index + 1}`}
+                  width={200}
+                  height={200}
+                  className='w-full h-full object-cover'
+                />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -215,19 +234,10 @@ export function ProductDetailsClient({
         </div>
       </div>
 
-      {/* Product Reviews */}
-      <div className='mt-12'>
-        <h2 className='font-serif text-2xl font-bold text-foreground mb-6'>
-          Reseñas de Clientes
-        </h2>
-        <ProductReviews reviews={reviews} />
-        <div className='mt-8'>
-          <h3 className='font-serif text-xl font-bold text-foreground mb-4'>
-            Escribe una reseña
-          </h3>
-          <ReviewForm productId={product.id} />
-        </div>
-      </div>
+      <RelatedProducts
+        categoryId={product.category_id}
+        currentProductId={product.id}
+      />
     </main>
   );
 }

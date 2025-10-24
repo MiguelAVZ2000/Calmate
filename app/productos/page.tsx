@@ -1,7 +1,6 @@
-'use client';
-
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import Image from 'next/image';
+import { createClient } from '@/lib/supabase/server'; // Import server client
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +9,6 @@ import { AddToCartButton } from '@/components/cart/add-to-cart-button';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProductFilters } from '@/components/product/product-filters';
-import Image from 'next/image';
-import { Suspense, useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 type Product = {
   id: number;
@@ -29,90 +25,54 @@ type Product = {
   } | null;
 };
 
-function ProductsSkeleton() {
-  return (
-    <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <Card key={i} className='h-full flex flex-col'>
-          <div className='relative w-full h-64 bg-muted rounded-t-lg'></div>
-          <div className='p-6 flex flex-col flex-grow'>
-            <div className='h-6 w-3/4 bg-muted rounded mb-2'></div>
-            <div className='h-10 w-full bg-muted rounded mb-3'></div>
-            <div className='h-5 w-1/2 bg-muted rounded mb-3'></div>
-            <div className='flex items-center justify-between mt-auto'>
-              <div className='h-7 w-1/4 bg-muted rounded'></div>
-              <div className='h-9 w-1/4 bg-muted rounded'></div>
-            </div>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
-}
+type SearchPageProps = {
+  searchParams: {
+    q?: string;
+    sort?: string;
+    category?: string;
+  };
+};
 
-function SearchPageComponent() {
-  const searchParams = useSearchParams();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const supabase = createClient();
+  const { q: query, sort, category } = searchParams;
 
-  const query = searchParams.get('q');
-  const sort = searchParams.get('sort');
-  const category = searchParams.get('category');
+  let queryBuilder = supabase.from('products').select('*, categories(name)');
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    const supabase = createClient();
-    try {
-      let queryBuilder = supabase
-        .from('products')
-        .select('*, categories(name)');
+  if (query) {
+    queryBuilder = queryBuilder.or(
+      `name.ilike.%${query}%,description.ilike.%${query}%`
+    );
+  }
 
-      if (query) {
-        queryBuilder = queryBuilder.or(
-          `name.ilike.%${query}%,description.ilike.%${query}%`
-        );
-      }
+  if (category && category !== 'all') {
+    const { data: categoryData } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', category)
+      .single();
 
-      if (category && category !== 'all') {
-        const { data: categoryData, error: categoryError } = await supabase
-          .from('categories')
-          .select('id')
-          .eq('slug', category)
-          .single();
-
-        if (categoryError) throw categoryError;
-        if (categoryData) {
-          queryBuilder = queryBuilder.eq('category_id', categoryData.id);
-        }
-      }
-
-      if (sort) {
-        const [sortBy, sortOrder] = sort.split('-');
-        queryBuilder = queryBuilder.order(sortBy, {
-          ascending: sortOrder === 'asc',
-        });
-      } else {
-        queryBuilder = queryBuilder.order('name', { ascending: true });
-      }
-
-      const { data, error: queryError } = await queryBuilder;
-
-      if (queryError) throw queryError;
-
-      setProducts(data as Product[]);
-    } catch (e) {
-      console.error('Error fetching products (client):', e);
-      setError(e);
-    } finally {
-      setLoading(false);
+    if (categoryData) {
+      queryBuilder = queryBuilder.eq('category_id', categoryData.id);
     }
-  }, [query, sort, category]);
+  }
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  if (sort) {
+    const [sortBy, sortOrder] = sort.split('-');
+    queryBuilder = queryBuilder.order(sortBy, {
+      ascending: sortOrder === 'asc',
+    });
+  } else {
+    queryBuilder = queryBuilder.order('name', { ascending: true });
+  }
+
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE - 1;
+  queryBuilder = queryBuilder.range(startIndex, endIndex);
+
+  const { data: products, error, count } = await queryBuilder;
+
+  const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
   return (
     <div className='min-h-screen bg-background'>
@@ -139,90 +99,79 @@ function SearchPageComponent() {
           </div>
         )}
 
-        {loading ? (
-          <ProductsSkeleton />
-        ) : products.length === 0 && !error ? (
+        {!error && products && products.length === 0 && (
           <div className='text-center text-muted-foreground my-8'>
             <p>No se encontraron productos que coincidan con tu búsqueda.</p>
           </div>
-        ) : (
-          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
-            {products.map((product) => (
-              <Link
-                href={`/productos/${product.id}`}
-                key={product.id}
-                className='block'
-              >
-                <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
-                  <CardContent className='p-0 flex flex-col flex-grow'>
-                    <div className='relative overflow-hidden rounded-t-lg'>
-                      <Image
-                        src={product.image || '/placeholder.svg'}
-                        alt={product.name}
-                        width={400}
-                        height={256}
-                        className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
-                      />
-                      {product.categories?.name && (
-                        <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
-                          {product.categories.name}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className='p-6 flex flex-col flex-grow'>
-                      <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
-                        {product.name}
-                      </h3>
-                      <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
-                        {product.description}
-                      </p>
-                      <div className='flex items-center mb-3'>
-                        <div className='flex items-center'>
-                          <Star className='h-4 w-4 fill-primary text-primary' />
-                          <span className='ml-1 text-sm font-medium'>
-                            {product.rating}
-                          </span>
-                        </div>
-                        <span className='text-muted-foreground text-sm ml-2'>
-                          ({product.reviews} reseñas)
-                        </span>
+        )}
+
+        {!error && products && products.length > 0 && (
+          <>
+            <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
+              {products.map((product: Product) => (
+                <Link
+                  href={`/productos/${product.id}`}
+                  key={product.id}
+                  className='block'
+                >
+                  <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 animate-fade-in-up'>
+                    <CardContent className='p-0 flex flex-col flex-grow'>
+                      <div className='relative overflow-hidden rounded-t-lg'>
+                        <Image
+                          src={product.image || '/placeholder.svg'}
+                          alt={product.name}
+                          width={400}
+                          height={256}
+                          className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
+                        />
+                        {product.categories?.name && (
+                          <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
+                            {product.categories.name}
+                          </Badge>
+                        )}
                       </div>
-                      <div className='flex items-center justify-between mt-auto'>
-                        <div className='flex items-center space-x-2'>
-                          <span className='font-bold text-lg text-foreground'>
-                            {formatCurrency(product.price)}
-                          </span>
-                          {product.original_price && (
-                            <span className='text-muted-foreground line-through text-sm'>
-                              {formatCurrency(product.original_price)}
+                      <div className='p-6 flex flex-col flex-grow'>
+                        <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
+                          {product.name}
+                        </h3>
+                        <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
+                          {product.description}
+                        </p>
+                        <div className='flex items-center mb-3'>
+                          <div className='flex items-center'>
+                            <Star className='h-4 w-4 fill-primary text-primary' />
+                            <span className='ml-1 text-sm font-medium'>
+                              {product.rating}
                             </span>
-                          )}
+                          </div>
+                          <span className='text-muted-foreground text-sm ml-2'>
+                            ({product.reviews} reseñas)
+                          </span>
                         </div>
-                        <AddToCartButton product={product} />
+                        <div className='flex items-center justify-between mt-auto'>
+                          <div className='flex items-center space-x-2'>
+                            <span className='font-bold text-lg text-foreground'>
+                              {formatCurrency(product.price)}
+                            </span>
+                            {product.original_price && (
+                              <span className='text-muted-foreground line-through text-sm'>
+                                {formatCurrency(product.original_price)}
+                              </span>
+                            )}
+                          </div>
+                          <AddToCartButton product={product} />
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
+          </>
         )}
       </main>
       <Footer />
     </div>
-  );
-}
-
-export default function SearchPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className='min-h-screen bg-background flex items-center justify-center'>
-          Cargando página...
-        </div>
-      }
-    >
-      <SearchPageComponent />
-    </Suspense>
   );
 }

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import HomePage from '../page';
+import HomePage from './page';
 
 // Mock child components to isolate the HomePage component test
 jest.mock('@/components/header', () => ({

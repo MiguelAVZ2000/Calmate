@@ -10,7 +10,9 @@ export default function HomePage() {
       <Header />
       <main>
         <HeroSection />
-        <FeaturedProducts />
+        <div className='section-alt'>
+          <FeaturedProducts />
+        </div>
         <OurStory />
       </main>
       <Footer />

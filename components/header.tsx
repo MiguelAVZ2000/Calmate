@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSupabase } from '@/components/auth-provider';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
   Home,
   Store,
   Shield,
+  Leaf,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { SearchInput } from './ui/search-input';
@@ -25,14 +26,24 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useCart } from '@/hooks/useCart';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const router = useRouter();
   const { supabase, user, profile } = useSupabase();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { cartItems } = useCart();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -43,215 +54,175 @@ export function Header() {
   const isAdmin = profile?.role === 'admin';
 
   return (
-    <header className='sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border'>
+    <header 
+      className={cn(
+        'sticky top-0 z-50 transition-all duration-300',
+        isScrolled 
+          ? 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm' 
+          : 'bg-transparent border-b border-transparent'
+      )}
+    >
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex items-center justify-between h-16'>
+        <div className='flex items-center justify-between h-20'>
           {/* Logo */}
           <Link href='/' className='flex items-center space-x-2'>
-            <div className='w-8 h-8 bg-primary rounded-full flex items-center justify-center'>
-              <span className='text-primary-foreground font-serif font-bold text-sm'>
-                C
-              </span>
-            </div>
-            <span className='font-serif text-2xl font-bold text-foreground'>
+            <Leaf className={cn('h-7 w-7', isScrolled ? 'text-primary' : 'text-white')} />
+            <span className={cn('font-serif text-2xl font-bold', isScrolled ? 'text-foreground' : 'text-white')}>
               Calmaté
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className='hidden md:flex items-center space-x-8'>
-            <Link
-              href='/'
-              className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-            >
-              <Home className='h-5 w-5' />
-              Inicio
-            </Link>
-            <Link
-              href='/productos'
-              className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-            >
-              <Store className='h-5 w-5' />
-              Productos
-            </Link>
+          <nav className='hidden md:flex items-center space-x-6'>
+            <NavLink href='/' isScrolled={isScrolled}>Inicio</NavLink>
+            <NavLink href='/productos' isScrolled={isScrolled}>Productos</NavLink>
             {isAdmin && (
-              <Link
-                href='/admin'
-                className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-              >
-                <Shield className='h-5 w-5' />
-                Admin
-              </Link>
+              <NavLink href='/admin' isScrolled={isScrolled}>Admin</NavLink>
             )}
           </nav>
 
           {/* Desktop Actions */}
           <div className='hidden md:flex items-center space-x-4'>
-            <Suspense
-              fallback={<div className='h-9 w-[300px] bg-muted rounded-md' />}
-            >
-              <SearchInput />
-            </Suspense>
+            <div className='hidden md:block'>
+              <Suspense
+                fallback={<div className='h-9 w-[200px] bg-muted rounded-md' />}
+              >
+                <SearchInput />
+              </Suspense>
+            </div>
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold p-2 rounded-md hover:bg-accent'>
-                  <User className='h-5 w-5' />
-                  Mi Perfil
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className='cursor-pointer'>
-                    <Link href='/perfil'>Editar Perfil</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className='cursor-pointer'
-                  >
-                    Cerrar Sesión
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} isScrolled={isScrolled} />
             ) : (
               <Link href='/auth'>
                 <Button
                   variant='ghost'
-                  className='flex items-center gap-2 text-foreground hover:text-primary'
+                  className={cn('transition-colors', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}
                 >
-                  <User className='h-5 w-5' />
-                  <span>Iniciar Sesión</span>
+                  <User className='mr-2 h-5 w-5' />
+                  Iniciar Sesión
                 </Button>
               </Link>
             )}
-            <Link href='/carrito'>
-              <Button
-                variant='ghost'
-                size='icon'
-                className='text-foreground hover:text-primary relative'
-              >
-                <ShoppingBag className='h-5 w-5' />
-                {totalItems > 0 && (
-                  <span className='absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-                    {totalItems}
-                  </span>
-                )}
-              </Button>
-            </Link>
+            <CartButton totalItems={totalItems} isScrolled={isScrolled} />
           </div>
 
           {/* Mobile Menu Button */}
           <Button
             variant='ghost'
             size='icon'
-            className='md:hidden'
+            className={cn('md:hidden transition-colors', isScrolled ? 'text-foreground' : 'text-white')}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? (
-              <X className='h-6 w-6' />
-            ) : (
-              <Menu className='h-6 w-6' />
-            )}
+            {isMenuOpen ? <X className='h-6 w-6' /> : <Menu className='h-6 w-6' />}
           </Button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className='md:hidden py-4 border-t border-border'>
-            <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
-              <Suspense
-                fallback={<div className='h-9 w-full bg-muted rounded-md' />}
-              >
-                <SearchInput />
-              </Suspense>
-            </div>
-            <nav className='flex flex-col space-y-4 mt-4'>
-              <Link
-                href='/'
-                className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Home className='h-5 w-5' />
-                Inicio
-              </Link>
-              <Link
-                href='/productos'
-                className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Store className='h-5 w-5' />
-                Productos
-              </Link>
-              {isAdmin && (
-                <Link
-                  href='/admin'
-                  className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold'
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Shield className='h-5 w-5' />
-                  Admin
-                </Link>
-              )}
-              <div className='flex items-center justify-between pt-4 border-t border-border'>
-                <div className='flex items-center space-x-4'>
-                  {user ? (
-                    <div className='flex items-center justify-between w-full'>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className='flex items-center gap-2 text-foreground hover:text-primary transition-colors font-semibold p-2 rounded-md hover:bg-accent'>
-                          <User className='h-5 w-5' />
-                          Mi Perfil
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end'>
-                          <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            asChild
-                            className='cursor-pointer'
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            <Link href='/perfil'>Editar Perfil</Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={handleSignOut}
-                            className='cursor-pointer'
-                          >
-                            Cerrar Sesión
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  ) : (
-                    <Link href='/auth' onClick={() => setIsMenuOpen(false)}>
-                      <Button
-                        variant='ghost'
-                        className='flex items-center gap-2 text-foreground hover:text-primary'
-                      >
-                        <User className='h-5 w-5' />
-                        <span>Iniciar Sesión</span>
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-                <Link href='/carrito' onClick={() => setIsMenuOpen(false)}>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-foreground hover:text-primary relative'
-                  >
-                    <ShoppingBag className='h-5 w-5' />
-                    {totalItems > 0 && (
-                      <span className='absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-                        {totalItems}
-                      </span>
-                    )}
-                  </Button>
-                </Link>
-              </div>
-            </nav>
-          </div>
+          <MobileNav isAdmin={isAdmin} user={user} userEmail={userEmail} handleSignOut={handleSignOut} totalItems={totalItems} closeMenu={() => setIsMenuOpen(false)} />
         )}
       </div>
     </header>
   );
+}
+
+function NavLink({ href, children, isScrolled }: { href: string, children: React.ReactNode, isScrolled: boolean }) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'font-medium transition-colors',
+        isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/80'
+      )}
+    >
+      {children}
+    </Link>
+  )
+}
+
+function UserMenu({ userEmail, handleSignOut, isScrolled }: { userEmail: string | undefined, handleSignOut: () => void, isScrolled: boolean }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className={cn('flex items-center gap-2', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}>
+          <User className='h-5 w-5' />
+          <span className="hidden lg:inline">Mi Cuenta</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align='end' className="mt-2">
+        <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className='cursor-pointer'>
+          <Link href='/perfil'>Editar Perfil</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className='cursor-pointer'>
+          <Link href='/pedidos'>Mis Pedidos</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          className='cursor-pointer text-red-500'
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Cerrar Sesión
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+function CartButton({ totalItems, isScrolled }: { totalItems: number, isScrolled: boolean }) {
+  return (
+    <Link href='/carrito'>
+      <Button
+        variant='ghost'
+        size='icon'
+        className={cn('relative transition-colors', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}
+      >
+        <ShoppingBag className='h-6 w-6' />
+        {totalItems > 0 && (
+          <span className='absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center animate-bounce'>
+            {totalItems}
+          </span>
+        )}
+      </Button>
+    </Link>
+  )
+}
+
+function MobileNav({ isAdmin, user, userEmail, handleSignOut, totalItems, closeMenu }: { isAdmin: boolean, user: any, userEmail: string | undefined, handleSignOut: () => void, totalItems: number, closeMenu: () => void }) {
+  return (
+    <div className='fixed inset-0 bg-background/95 backdrop-blur-lg z-50 flex flex-col p-6 md:hidden'>
+      <div className="flex justify-end mb-8">
+        <Button variant="ghost" size="icon" onClick={closeMenu}>
+          <X className="h-7 w-7" />
+        </Button>
+      </div>
+      <nav className='flex flex-col items-center justify-center flex-grow space-y-8'>
+        <Link href='/' className='text-2xl font-semibold' onClick={closeMenu}>Inicio</Link>
+        <Link href='/productos' className='text-2xl font-semibold' onClick={closeMenu}>Productos</Link>
+        {isAdmin && (
+          <Link href='/admin' className='text-2xl font-semibold' onClick={closeMenu}>Admin</Link>
+        )}
+      </nav>
+      <div className="border-t border-border pt-6">
+        <Suspense fallback={<div className='h-9 w-full bg-muted rounded-md mb-4' />}>
+          <SearchInput />
+        </Suspense>
+        <div className="flex justify-between items-center mt-6">
+          {user ? (
+            <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} isScrolled={true} />
+          ) : (
+            <Link href='/auth' onClick={closeMenu}>
+              <Button variant='outline' className="w-full">
+                <User className='mr-2 h-5 w-5' />
+                Iniciar Sesión
+              </Button>
+            </Link>
+          )}
+          <CartButton totalItems={totalItems} isScrolled={true} />
+        </div>
+      </div>
+    </div>
+  )
 }

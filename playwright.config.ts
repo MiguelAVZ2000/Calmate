@@ -8,6 +8,7 @@ const baseURL = 'http://localhost:3000';
  */
 export default defineConfig({
   testDir: './e2e', // Directorio donde estarán las pruebas E2E.
+  globalSetup: require.resolve('./e2e/global-setup.ts'), // Polyfill para TransformStream
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

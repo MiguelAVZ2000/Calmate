@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ProductCard } from '@/components/product/product-card';
+import { ProductCardSkeleton } from '@/components/product/product-card-skeleton';
 import { createClient } from '@/lib/supabase/client';
-import { formatCurrency } from '@/lib/utils';
-import Link from 'next/link';
-import Image from 'next/image';
+import { ChevronLeft, ChevronRight, Leaf } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Define a type for our product for better type safety
 type Product = {
@@ -27,18 +25,39 @@ type Product = {
 export function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    emblaApi.on('select', onSelect);
+    onSelect(); // Set initial value
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .limit(4);
+        .order('rating', { ascending: false })
+        .limit(8);
 
       if (error) {
         console.error('Error fetching products:', error);
+        setError('No se pudieron cargar los productos destacados.');
         setLoading(false);
       } else {
         setProducts(data as Product[]);
@@ -49,23 +68,36 @@ export function FeaturedProducts() {
     fetchProducts();
   }, [supabase]);
 
-  const nextSlide = () => {
-    if (products.length === 0) return;
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-  };
-
-  const prevSlide = () => {
-    if (products.length === 0) return;
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + products.length) % products.length
-    );
-  };
-
   if (loading) {
     return (
       <section className='py-16 bg-muted/30'>
+        <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-12'>
+            <div className='flex justify-center items-center gap-3 mb-4'>
+            <Leaf className='h-8 w-8 text-primary' />
+            <h2 className='font-serif text-3xl md:text-4xl font-bold text-foreground'>
+              Nuestros Favoritos
+            </h2>
+          </div>
+            <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
+              Una selección de nuestros tés más queridos, perfectos para cualquier ocasión.
+            </p>
+          </div>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+            {[...Array(4)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className='py-16 bg-muted/30'>
         <div className='container mx-auto px-4 sm:px-6 lg:px-8 text-center'>
-          <p>Cargando productos destacados...</p>
+          <p className='text-destructive'>{error}</p>
         </div>
       </section>
     );
@@ -80,143 +112,19 @@ export function FeaturedProducts() {
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='text-center mb-12'>
           <h2 className='font-serif text-3xl md:text-4xl font-bold text-foreground mb-4'>
-            Productos Destacados
+            Nuestros Favoritos
           </h2>
           <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
-            Descubre nuestra selección de tés más apreciados, elegidos por su
-            calidad excepcional y sabor único
+            Una selección de nuestros tés más queridos, perfectos para cualquier ocasión.
           </p>
         </div>
 
-        {/* Desktop Grid */}
-        <div className='hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
-          {products.map((product) => (
-            <Link
-              href={`/productos/${product.id}`}
-              key={product.id}
-              className='block'
-            >
-              <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
-                <CardContent className='p-0 flex-grow'>
-                  <div className='relative overflow-hidden rounded-t-lg'>
-                    <Image
-                      src={product.image_url || '/placeholder.svg'}
-                      alt={product.name}
-                      width={400}
-                      height={256}
-                      className='w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300'
-                    />
-                    <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
-                      {product.badge}
-                    </Badge>
-                  </div>
-                  <div className='p-6 flex flex-col flex-grow'>
-                    <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
-                      {product.name}
-                    </h3>
-                    <p className='text-muted-foreground text-sm mb-3 line-clamp-2 flex-grow'>
-                      {product.description}
-                    </p>
-                    <div className='flex items-center mb-3'>
-                      <div className='flex items-center'>
-                        <Star className='h-4 w-4 fill-primary text-primary' />
-                        <span className='ml-1 text-sm font-medium'>
-                          {product.rating}
-                        </span>
-                      </div>
-                      <span className='text-muted-foreground text-sm ml-2'>
-                        ({product.reviews_count} reseñas)
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between mt-auto'>
-                      <div className='flex items-center space-x-2'>
-                        <span className='font-bold text-lg text-foreground'>
-                          {formatCurrency(product.price)}
-                        </span>
-                        {product.original_price && (
-                          <span className='text-muted-foreground line-through text-sm'>
-                            {formatCurrency(product.original_price)}
-                          </span>
-                        )}
-                      </div>
-                      <Button
-                        size='sm'
-                        className='bg-primary hover:bg-primary/90 text-primary-foreground'
-                      >
-                        Añadir
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile Carousel */}
-        <div className='md:hidden relative'>
-          <div className='overflow-hidden'>
-            <div
-              className='flex transition-transform duration-300 ease-in-out'
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
+        <div className='relative'>
+          <div className='overflow-hidden' ref={emblaRef}>
+            <div className='flex -ml-4'>
               {products.map((product) => (
-                <div key={product.id} className='w-full flex-shrink-0 px-4'>
-                  <Link href={`/productos/${product.id}`} className='block'>
-                    <Card className='group hover:shadow-lg transition-all duration-300 border-border/50'>
-                      <CardContent className='p-0'>
-                        <div className='relative overflow-hidden rounded-t-lg'>
-                          <Image
-                            src={product.image_url || '/placeholder.svg'}
-                            alt={product.name}
-                            width={400}
-                            height={256}
-                            className='w-full h-64 object-cover'
-                          />
-                          <Badge className='absolute top-3 left-3 bg-primary text-primary-foreground'>
-                            {product.badge}
-                          </Badge>
-                        </div>
-                        <div className='p-6'>
-                          <h3 className='font-serif text-xl font-semibold text-foreground mb-2'>
-                            {product.name}
-                          </h3>
-                          <p className='text-muted-foreground text-sm mb-3'>
-                            {product.description}
-                          </p>
-                          <div className='flex items-center mb-3'>
-                            <div className='flex items-center'>
-                              <Star className='h-4 w-4 fill-primary text-primary' />
-                              <span className='ml-1 text-sm font-medium'>
-                                {product.rating}
-                              </span>
-                            </div>
-                            <span className='text-muted-foreground text-sm ml-2'>
-                              ({product.reviews_count} reseñas)
-                            </span>
-                          </div>
-                          <div className='flex items-center justify-between'>
-                            <div className='flex items-center space-x-2'>
-                              <span className='font-bold text-lg text-foreground'>
-                                {formatCurrency(product.price)}
-                              </span>
-                              {product.original_price && (
-                                <span className='text-muted-foreground line-through text-sm'>
-                                  {formatCurrency(product.original_price)}
-                                </span>
-                              )}
-                            </div>
-                            <Button
-                              size='sm'
-                              className='bg-primary hover:bg-primary/90 text-primary-foreground'
-                            >
-                              Añadir
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                <div key={product.id} className='pl-4 flex-[0_0_100%] sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%]'>
+                  <ProductCard product={product} />
                 </div>
               ))}
             </div>
@@ -224,33 +132,33 @@ export function FeaturedProducts() {
 
           {/* Carousel Controls */}
           <Button
-            variant='outline'
+            variant='ghost'
             size='icon'
-            className='absolute left-2 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur'
-            onClick={prevSlide}
+            className='absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full h-10 w-10 bg-transparent hover:bg-primary/20 text-primary z-10 hidden md:flex'
+            onClick={scrollPrev}
           >
-            <ChevronLeft className='h-4 w-4' />
+            <ChevronLeft className='h-6 w-6' />
           </Button>
           <Button
-            variant='outline'
+            variant='ghost'
             size='icon'
-            className='absolute right-2 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur'
-            onClick={nextSlide}
+            className='absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full h-10 w-10 bg-transparent hover:bg-primary/20 text-primary z-10 hidden md:flex'
+            onClick={scrollNext}
           >
-            <ChevronRight className='h-4 w-4' />
+            <ChevronRight className='h-6 w-6' />
           </Button>
 
           {/* Carousel Indicators */}
-          <div className='flex justify-center mt-6 space-x-2'>
+          <div className='flex justify-center mt-8 space-x-2'>
             {products.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentIndex
+                className={`w-6 h-1 rounded-full transition-all duration-300 ${
+                  index === selectedIndex
                     ? 'bg-primary'
                     : 'bg-muted-foreground/30'
                 }`}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => scrollTo(index)}
               />
             ))}
           </div>

@@ -1,25 +1,28 @@
 # Calmate
 
-_-- Agrega aquí una descripción breve y clara de lo que hace tu proyecto. --_
+_Una tienda de té online para encontrar tu momento de calma._
 
-Este proyecto es una aplicación web construida con el stack de Next.js, diseñada para [describe el propósito, ej: ser una plataforma de e-commerce para vender productos de relajación].
+Este proyecto es una aplicación de e-commerce construida con el stack de Next.js, diseñada para ofrecer una experiencia de compra de tés y accesorios de alta calidad.
 
 ## ✨ Características
 
-- Navegación de productos
-- Carrito de compras
-- Proceso de Checkout
-- Autenticación de usuarios con Supabase
-- Panel de administración
+- **Carga Optimizada:** Uso de Skeletons y carga de datos en el servidor para una experiencia de usuario fluida y rápida.
+- Navegación y filtrado de productos por categoría y precio.
+- Carrito de compras persistente.
+- Proceso de Checkout integrado.
+- Autenticación de usuarios con Supabase.
+- Panel de administración para la gestión de productos.
 
 ## 🚀 Stack Tecnológico
 
-- **Framework:** [Next.js](https://nextjs.org/)
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
 - **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
 - **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
-- **Componentes UI:** [Shadcn/ui](https://ui.shadcn.com/) (basado en Radix UI)
+- **Componentes UI:** [Shadcn/ui](https://ui.shadcn.com/)
 - **Backend y Base de Datos:** [Supabase](https://supabase.io/)
 - **Validación de Formularios:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
+- **Testing E2E:** [Playwright](https://playwright.dev/)
+- **Testing Unitario:** [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/)
 
 ## 📋 Requisitos Previos
 
@@ -46,7 +49,7 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local.
     ```
 
 3.  **Configura las variables de entorno:**
-    Crea una copia del archivo `.env.example` que se encuentra en el repositorio y renómbrala a `.env.local`.
+    Crea una copia del archivo `.env.example` y renómbrala a `.env.local`.
 
     ```bash
     cp .env.example .env.local
@@ -73,31 +76,20 @@ Sigue estos pasos para poner en marcha el proyecto en tu entorno local.
     Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
 
 2.  **(Opcional) Puebla la base de datos con datos de prueba:**
+
     ```bash
     npm run db:seed
     ```
 
 ## 🧪 Testing
 
-Este proyecto utiliza una estrategia de testing dual para asegurar la calidad y estabilidad del código:
+Este proyecto utiliza una estrategia de testing dual para asegurar la calidad del código.
 
-### 1. Pruebas Unitarias y de Componentes (Jest)
-
--   **Tecnologías**: [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
--   **Ubicación**: Los archivos de prueba se encuentran en carpetas `__tests__` dentro de los directorios `app` y `components`, junto a los archivos que prueban.
--   **Propósito**: Verificar que los componentes individuales y las funciones de lógica de negocio se comportan como se espera de forma aislada.
-
-Para ejecutar estas pruebas, usa el siguiente comando:
-
-```bash
-npm run test:unit
-```
-
-### 2. Pruebas End-to-End (Playwright)
+### Pruebas End-to-End (Playwright)
 
 -   **Tecnología**: [Playwright](https://playwright.dev/).
--   **Ubicación**: Los archivos de prueba están en la carpeta `e2e/` en la raíz del proyecto.
--   **Propósito**: Simular flujos de usuario completos en un navegador real para garantizar que la aplicación funciona correctamente de principio a fin.
+-   **Ubicación**: Los archivos de prueba están en la carpeta `e2e/`.
+-   **Propósito**: Simular flujos de usuario completos para garantizar que la aplicación funciona correctamente de principio a fin.
 
 Para ejecutar estas pruebas, usa el siguiente comando:
 
@@ -105,11 +97,18 @@ Para ejecutar estas pruebas, usa el siguiente comando:
 npm run test:e2e
 ```
 
+### Pruebas Unitarias y de Componentes (Jest)
+
+-   **Tecnologías**: [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/).
+-   **Ubicación**: Los archivos de prueba (`.test.tsx`) se encuentran junto a los componentes y páginas que prueban.
+-   **Propósito**: Verificar que los componentes individuales se comportan como se espera.
+
+> **Nota:** La configuración de Jest está actualmente en revisión para solucionar problemas de compatibilidad con el entorno de ejecución. Las pruebas unitarias pueden no ejecutarse correctamente en este momento.
+
 ## 📜 Scripts Disponibles
 
 - `npm run dev`: Inicia la aplicación en modo de desarrollo.
 - `npm run build`: Compila la aplicación para producción.
 - `npm run start`: Inicia un servidor de producción.
 - `npm run lint`: Ejecuta el linter (ESLint) para analizar el código.
-- `npm run test:unit`: Ejecuta las pruebas unitarias y de componentes.
 - `npm run test:e2e`: Ejecuta las pruebas End-to-End.

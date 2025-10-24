@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
 
 type Category = {
   id: number;
@@ -22,10 +23,14 @@ export function ProductFilters() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
     async function fetchCategories() {
+      setLoading(true);
+      setError(null);
       const { data, error } = await supabase
         .from('categories')
         .select('id, name, slug')
@@ -36,7 +41,9 @@ export function ProductFilters() {
       }
       if (error) {
         console.error('Error al obtener las categorías:', error);
+        setError('Error al cargar categorías');
       }
+      setLoading(false);
     }
     fetchCategories();
   }, [supabase]);
@@ -54,6 +61,10 @@ export function ProductFilters() {
     const query = search ? `?${search}` : '';
 
     router.push(`${pathname}${query}`);
+  };
+
+  const clearFilters = () => {
+    router.push(pathname);
   };
 
   return (
@@ -79,9 +90,16 @@ export function ProductFilters() {
         <Select
           onValueChange={(value) => handleFilterChange('category', value)}
           defaultValue={searchParams.get('category') || ''}
+          disabled={loading || !!error}
         >
           <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Filtrar por categoría' />
+            <SelectValue
+              placeholder={
+                loading
+                  ? 'Cargando categorías...'
+                  : error || 'Filtrar por categoría'
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>Todas las categorías</SelectItem>
@@ -93,6 +111,11 @@ export function ProductFilters() {
           </SelectContent>
         </Select>
       </div>
+      {(searchParams.get('sort') || searchParams.get('category')) && (
+        <Button variant='ghost' onClick={clearFilters}>
+          Limpiar filtros
+        </Button>
+      )}
     </div>
   );
 }

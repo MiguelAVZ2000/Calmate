@@ -1,0 +1,273 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "C Calmaté" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: C
+          - generic [ref=e9]: Calmaté
+        - navigation [ref=e10]:
+          - link "Inicio" [ref=e11] [cursor=pointer]:
+            - /url: /
+          - link "Productos" [ref=e12] [cursor=pointer]:
+            - /url: /productos
+        - generic [ref=e13]:
+          - generic:
+            - generic:
+              - img
+              - searchbox "Buscar productos..."
+          - link "Iniciar Sesión" [ref=e14] [cursor=pointer]:
+            - /url: /auth
+            - button "Iniciar Sesión" [ref=e15]:
+              - img
+              - text: Iniciar Sesión
+          - link [ref=e16] [cursor=pointer]:
+            - /url: /carrito
+            - button [ref=e17]:
+              - img
+    - main [ref=e18]:
+      - generic [ref=e22]:
+        - heading "Encuentra tu Momento de Calma en Cada Taza" [level=1] [ref=e23]:
+          - text: Encuentra tu Momento de Calma
+          - generic [ref=e24]: en Cada Taza
+        - paragraph [ref=e25]: Explora nuestra selección de tés artesanales y encuentra la mezcla perfecta para tu ritual diario.
+        - generic [ref=e26]:
+          - link "Descubrir Tés" [ref=e27] [cursor=pointer]:
+            - /url: /productos
+            - button "Descubrir Tés" [ref=e28]:
+              - text: Descubrir Tés
+              - img
+          - link "Nuestra Filosofía" [ref=e29] [cursor=pointer]:
+            - /url: /acerca
+            - button "Nuestra Filosofía" [ref=e30]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - heading "Nuestros Favoritos" [level=2] [ref=e35]
+          - paragraph [ref=e36]: Una selección de nuestros tés más queridos, perfectos para cualquier ocasión.
+        - generic [ref=e37]:
+          - generic [ref=e39]:
+            - link "Earl Grey Añadir al Carrito Earl Grey 4.9 | reseñas $9.490 $10.500" [ref=e41] [cursor=pointer]:
+              - /url: /productos/2
+              - generic [ref=e43]:
+                - generic [ref=e44]:
+                  - img "Earl Grey" [ref=e45]
+                  - button "Añadir al Carrito" [ref=e47]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e48]:
+                  - heading "Earl Grey" [level=3] [ref=e49]
+                  - generic [ref=e51]:
+                    - img [ref=e52]
+                    - generic [ref=e54]: "4.9"
+                    - generic [ref=e55]: "|"
+                    - generic [ref=e56]: reseñas
+                  - generic [ref=e57]:
+                    - generic [ref=e58]: $9.490
+                    - generic [ref=e59]: $10.500
+            - link "Oolong Tie Guan Yin Añadir al Carrito Oolong Tie Guan Yin 4.9 | reseñas $14.990" [ref=e61] [cursor=pointer]:
+              - /url: /productos/5
+              - generic [ref=e63]:
+                - generic [ref=e64]:
+                  - img "Oolong Tie Guan Yin" [ref=e65]
+                  - button "Añadir al Carrito" [ref=e67]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e68]:
+                  - heading "Oolong Tie Guan Yin" [level=3] [ref=e69]
+                  - generic [ref=e71]:
+                    - img [ref=e72]
+                    - generic [ref=e74]: "4.9"
+                    - generic [ref=e75]: "|"
+                    - generic [ref=e76]: reseñas
+                  - generic [ref=e78]: $14.990
+            - link "English Breakfast Añadir al Carrito English Breakfast 4.8 | reseñas $8.990" [ref=e80] [cursor=pointer]:
+              - /url: /productos/1
+              - generic [ref=e82]:
+                - generic [ref=e83]:
+                  - img "English Breakfast" [ref=e84]
+                  - button "Añadir al Carrito" [ref=e86]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e87]:
+                  - heading "English Breakfast" [level=3] [ref=e88]
+                  - generic [ref=e90]:
+                    - img [ref=e91]
+                    - generic [ref=e93]: "4.8"
+                    - generic [ref=e94]: "|"
+                    - generic [ref=e95]: reseñas
+                  - generic [ref=e97]: $8.990
+            - link "Manzanilla y Lavanda Añadir al Carrito Manzanilla y Lavanda 4.8 | reseñas $6.990" [ref=e99] [cursor=pointer]:
+              - /url: /productos/6
+              - generic [ref=e101]:
+                - generic [ref=e102]:
+                  - img "Manzanilla y Lavanda" [ref=e103]
+                  - button "Añadir al Carrito" [ref=e105]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e106]:
+                  - heading "Manzanilla y Lavanda" [level=3] [ref=e107]
+                  - generic [ref=e109]:
+                    - img [ref=e110]
+                    - generic [ref=e112]: "4.8"
+                    - generic [ref=e113]: "|"
+                    - generic [ref=e114]: reseñas
+                  - generic [ref=e116]: $6.990
+            - link "Frutos del Bosque Añadir al Carrito Frutos del Bosque 4.7 | reseñas $7.490" [ref=e118] [cursor=pointer]:
+              - /url: /productos/7
+              - generic [ref=e120]:
+                - generic [ref=e121]:
+                  - img "Frutos del Bosque" [ref=e122]
+                  - button "Añadir al Carrito" [ref=e124]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e125]:
+                  - heading "Frutos del Bosque" [level=3] [ref=e126]
+                  - generic [ref=e128]:
+                    - img [ref=e129]
+                    - generic [ref=e131]: "4.7"
+                    - generic [ref=e132]: "|"
+                    - generic [ref=e133]: reseñas
+                  - generic [ref=e135]: $7.490
+            - link "Sencha Japonés Añadir al Carrito Sencha Japonés 4.7 | reseñas $10.990" [ref=e137] [cursor=pointer]:
+              - /url: /productos/3
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - img "Sencha Japonés" [ref=e141]
+                  - button "Añadir al Carrito" [ref=e143]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e144]:
+                  - heading "Sencha Japonés" [level=3] [ref=e145]
+                  - generic [ref=e147]:
+                    - img [ref=e148]
+                    - generic [ref=e150]: "4.7"
+                    - generic [ref=e151]: "|"
+                    - generic [ref=e152]: reseñas
+                  - generic [ref=e154]: $10.990
+            - link "Té Verde con Menta Añadir al Carrito Té Verde con Menta 4.6 | reseñas $7.990" [ref=e156] [cursor=pointer]:
+              - /url: /productos/4
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - img "Té Verde con Menta" [ref=e160]
+                  - button "Añadir al Carrito" [ref=e162]:
+                    - img
+                    - text: Añadir al Carrito
+                - generic [ref=e163]:
+                  - heading "Té Verde con Menta" [level=3] [ref=e164]
+                  - generic [ref=e166]:
+                    - img [ref=e167]
+                    - generic [ref=e169]: "4.6"
+                    - generic [ref=e170]: "|"
+                    - generic [ref=e171]: reseñas
+                  - generic [ref=e173]: $7.990
+          - button [ref=e174]:
+            - img
+          - button [ref=e175]:
+            - img
+          - generic [ref=e176]:
+            - button [ref=e177]
+            - button [ref=e178]
+            - button [ref=e179]
+            - button [ref=e180]
+            - button [ref=e181]
+            - button [ref=e182]
+            - button [ref=e183]
+      - generic [ref=e186]:
+        - generic [ref=e187]:
+          - img "Plantación de té tradicional" [ref=e189]
+          - img "Taza de té de cerámica" [ref=e191]
+        - generic [ref=e192]:
+          - heading "Una Tradición de Calma y Calidad" [level=2] [ref=e193]
+          - paragraph [ref=e194]: En Calmaté, creemos que cada taza de té es un ritual. Una pausa en el día para reconectar y encontrar un momento de serenidad. Nuestra historia es una de pasión por la calidad y respeto por la tierra.
+          - generic [ref=e195]:
+            - generic [ref=e196]:
+              - img [ref=e198]
+              - generic [ref=e201]: 100% Orgánico y Natural
+            - generic [ref=e202]:
+              - img [ref=e204]
+              - generic [ref=e207]: Calidad Premium Garantizada
+            - generic [ref=e208]:
+              - img [ref=e210]
+              - generic [ref=e213]: Comercio Justo y Sostenible
+            - generic [ref=e214]:
+              - img [ref=e216]
+              - generic [ref=e218]: Elaborado con Pasión
+          - link "Nuestra Filosofía" [ref=e219] [cursor=pointer]:
+            - /url: /acerca
+            - button "Nuestra Filosofía" [ref=e220]
+    - contentinfo [ref=e221]:
+      - generic [ref=e222]:
+        - generic [ref=e223]:
+          - generic [ref=e224]:
+            - link "C Calmaté" [ref=e225] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e227]: C
+              - generic [ref=e228]: Calmaté
+            - paragraph [ref=e229]: Tu santuario de tés premium. Descubre sabores que calman el alma y elevan el espíritu.
+            - generic [ref=e230]:
+              - link [ref=e231] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e232]
+              - link [ref=e234] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e235]
+              - link [ref=e238] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e239]
+          - generic [ref=e241]:
+            - heading "Navegación" [level=3] [ref=e242]
+            - list [ref=e243]:
+              - listitem [ref=e244]:
+                - link "Inicio" [ref=e245] [cursor=pointer]:
+                  - /url: /
+              - listitem [ref=e246]:
+                - link "Productos" [ref=e247] [cursor=pointer]:
+                  - /url: /productos
+              - listitem [ref=e248]:
+                - link "Nuestra Historia" [ref=e249] [cursor=pointer]:
+                  - /url: /acerca
+              - listitem [ref=e250]:
+                - link "Blog" [ref=e251] [cursor=pointer]:
+                  - /url: /blog
+          - generic [ref=e252]:
+            - heading "Categorías" [level=3] [ref=e253]
+            - list [ref=e254]:
+              - listitem [ref=e255]:
+                - link "Té Negro" [ref=e256] [cursor=pointer]:
+                  - /url: /productos?category=te-negro
+              - listitem [ref=e257]:
+                - link "Té Verde" [ref=e258] [cursor=pointer]:
+                  - /url: /productos?category=te-verde
+              - listitem [ref=e259]:
+                - link "Oolong" [ref=e260] [cursor=pointer]:
+                  - /url: /productos?category=oolong
+              - listitem [ref=e261]:
+                - link "Infusiones" [ref=e262] [cursor=pointer]:
+                  - /url: /productos?category=infusiones
+          - generic [ref=e263]:
+            - heading "Ayuda" [level=3] [ref=e264]
+            - list [ref=e265]:
+              - listitem [ref=e266]:
+                - link "Contacto" [ref=e267] [cursor=pointer]:
+                  - /url: /contacto
+              - listitem [ref=e268]:
+                - link "Preguntas Frecuentes" [ref=e269] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e270]:
+                - link "Envíos y Devoluciones" [ref=e271] [cursor=pointer]:
+                  - /url: /envios
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - heading "Suscríbete a nuestro boletín" [level=3] [ref=e274]
+            - paragraph [ref=e275]: Recibe ofertas exclusivas y las últimas novedades.
+            - generic [ref=e276]:
+              - textbox "Tu correo electrónico" [ref=e277]
+              - button [ref=e278]:
+                - img
+          - paragraph [ref=e279]: © 2025 Calmaté. Todos los derechos reservados.
+  - region "Notifications alt+T"
+  - alert [ref=e280]
+```
