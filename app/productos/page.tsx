@@ -9,6 +9,9 @@ import { AddToCartButton } from '@/components/cart/add-to-cart-button';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProductFilters } from '@/components/product/product-filters';
+import { Pagination } from '@/components/ui/pagination';
+
+const PAGE_SIZE = 8;
 
 type Product = {
   id: number;
@@ -36,6 +39,7 @@ type SearchPageProps = {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const supabase = createClient();
   const { q: query, sort, category } = searchParams;
+  const currentPage = parseInt(searchParams.page || '1');
 
   let queryBuilder = supabase.from('products').select('*, categories(name)');
 

@@ -1,6 +1,7 @@
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProductCardSkeleton } from '@/components/product/product-card-skeleton';
+import { ProductFilters } from '@/components/product/product-filters';
 
 function ProductsSkeleton() {
   return (

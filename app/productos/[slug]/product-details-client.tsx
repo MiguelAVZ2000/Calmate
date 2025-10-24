@@ -12,6 +12,7 @@ import { ProductReviews } from '@/components/product/product-reviews';
 import { ReviewForm } from '@/components/product/review-form';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
+import { RelatedProducts } from '@/components/product/related-products';
 
 // Simplified Product Type
 type Product = {
@@ -106,21 +107,23 @@ export function ProductDetailsClient({
             />
           </div>
           <div className='grid grid-cols-4 gap-4'>
-            {[product.image_url, ...(product.images || [])].map((image, index) => (
-              <div
-                key={index}
-                className={`aspect-square rounded-lg overflow-hidden cursor-pointer ${selectedImage === image ? 'ring-2 ring-primary' : ''}`}
-                onClick={() => setSelectedImage(image)}
-              >
-                <Image
-                  src={image || '/placeholder.svg'}
-                  alt={`${product.name} thumbnail ${index + 1}`}
-                  width={200}
-                  height={200}
-                  className='w-full h-full object-cover'
-                />
-              </div>
-            ))}
+            {[product.image_url, ...(product.images || [])].map(
+              (image, index) => (
+                <div
+                  key={index}
+                  className={`aspect-square rounded-lg overflow-hidden cursor-pointer ${selectedImage === image ? 'ring-2 ring-primary' : ''}`}
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <Image
+                    src={image || '/placeholder.svg'}
+                    alt={`${product.name} thumbnail ${index + 1}`}
+                    width={200}
+                    height={200}
+                    className='w-full h-full object-cover'
+                  />
+                </div>
+              )
+            )}
           </div>
         </div>
 
