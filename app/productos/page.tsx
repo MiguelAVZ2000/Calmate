@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server'; // Import server client
+import { cookies } from 'next/headers';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,11 +38,14 @@ type SearchPageProps = {
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const supabase = createClient();
-  const { q: query, sort, category } = searchParams;
-  const currentPage = parseInt(searchParams.page || '1');
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { q: query, sort, category, page } = searchParams;
+  const currentPage = parseInt(page || '1');
 
-  let queryBuilder = supabase.from('products').select('*, categories(name)');
+  let queryBuilder = supabase
+    .from('products')
+    .select('*, categories(name)', { count: 'exact' });
 
   if (query) {
     queryBuilder = queryBuilder.or(
@@ -50,14 +54,23 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
 
   if (category && category !== 'all') {
-    const { data: categoryData } = await supabase
+    const { data: categoryData, error: categoryError } = await supabase
       .from('categories')
       .select('id')
       .eq('slug', category)
       .single();
 
+    if (categoryError) {
+      throw new Error(
+        `Error fetching category details: ${categoryError.message} (code: ${categoryError.code})`
+      );
+    }
+
     if (categoryData) {
       queryBuilder = queryBuilder.eq('category_id', categoryData.id);
+    } else {
+      // If a category is selected but not found, return no products.
+      queryBuilder = queryBuilder.eq('id', 'this-will-not-match-anything');
     }
   }
 
@@ -75,6 +88,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   queryBuilder = queryBuilder.range(startIndex, endIndex);
 
   const { data: products, error, count } = await queryBuilder;
+  console.log('Supabase error in SearchPage:', error);
 
   const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 0;
 
@@ -91,7 +105,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </p>
         </div>
 
-        <ProductFilters />
+        <ProductFilters initialSearchParams={searchParams} />
 
         {error && (
           <div className='text-center text-red-500 my-8'>

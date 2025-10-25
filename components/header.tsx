@@ -54,30 +54,34 @@ export function Header() {
   const isAdmin = profile?.role === 'admin';
 
   return (
-    <header 
+    <header
       className={cn(
         'sticky top-0 z-50 transition-all duration-300',
-        isScrolled 
-          ? 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm' 
-          : 'bg-transparent border-b border-transparent'
+        'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm'
       )}
     >
-      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
+      <div className='mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl'>
         <div className='flex items-center justify-between h-20'>
           {/* Logo */}
           <Link href='/' className='flex items-center space-x-2'>
-            <Leaf className={cn('h-7 w-7', isScrolled ? 'text-primary' : 'text-white')} />
-            <span className={cn('font-serif text-2xl font-bold', isScrolled ? 'text-foreground' : 'text-white')}>
+            <Leaf className={'h-7 w-7 text-primary'} />
+            <span className={'font-serif text-2xl font-bold text-foreground'}>
               Calmaté
             </span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className='hidden md:flex items-center space-x-6'>
-            <NavLink href='/' isScrolled={isScrolled}>Inicio</NavLink>
-            <NavLink href='/productos' isScrolled={isScrolled}>Productos</NavLink>
+            <NavLink href='/' icon={<Home className='h-5 w-5' />}>
+              Inicio
+            </NavLink>
+            <NavLink href='/productos' icon={<Store className='h-5 w-5' />}>
+              Productos
+            </NavLink>
             {isAdmin && (
-              <NavLink href='/admin' isScrolled={isScrolled}>Admin</NavLink>
+              <NavLink href='/admin' icon={<Shield className='h-5 w-5' />}>
+                Admin
+              </NavLink>
             )}
           </nav>
 
@@ -91,65 +95,100 @@ export function Header() {
               </Suspense>
             </div>
             {user ? (
-              <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} isScrolled={isScrolled} />
+              <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} />
             ) : (
               <Link href='/auth'>
                 <Button
                   variant='ghost'
-                  className={cn('transition-colors', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}
+                  className={
+                    'transition-colors text-foreground hover:text-primary'
+                  }
                 >
                   <User className='mr-2 h-5 w-5' />
                   Iniciar Sesión
                 </Button>
               </Link>
             )}
-            <CartButton totalItems={totalItems} isScrolled={isScrolled} />
+            <CartButton totalItems={totalItems} />
           </div>
 
           {/* Mobile Menu Button */}
           <Button
             variant='ghost'
             size='icon'
-            className={cn('md:hidden transition-colors', isScrolled ? 'text-foreground' : 'text-white')}
+            className={cn(
+              'md:hidden transition-colors',
+              isScrolled ? 'text-foreground' : 'text-white'
+            )}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className='h-6 w-6' /> : <Menu className='h-6 w-6' />}
+            {isMenuOpen ? (
+              <X className='h-6 w-6' />
+            ) : (
+              <Menu className='h-6 w-6' />
+            )}
           </Button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <MobileNav isAdmin={isAdmin} user={user} userEmail={userEmail} handleSignOut={handleSignOut} totalItems={totalItems} closeMenu={() => setIsMenuOpen(false)} />
+          <MobileNav
+            isAdmin={isAdmin}
+            user={user}
+            userEmail={userEmail}
+            handleSignOut={handleSignOut}
+            totalItems={totalItems}
+            closeMenu={() => setIsMenuOpen(false)}
+          />
         )}
       </div>
     </header>
   );
 }
 
-function NavLink({ href, children, isScrolled }: { href: string, children: React.ReactNode, isScrolled: boolean }) {
+function NavLink({
+  href,
+  children,
+  icon,
+}: {
+  href: string;
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
   return (
     <Link
       href={href}
-      className={cn(
-        'font-medium transition-colors',
-        isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/80'
-      )}
+      className={
+        'font-medium transition-colors text-foreground hover:text-primary flex items-center gap-2'
+      }
     >
+      {icon}
       {children}
     </Link>
-  )
+  );
 }
 
-function UserMenu({ userEmail, handleSignOut, isScrolled }: { userEmail: string | undefined, handleSignOut: () => void, isScrolled: boolean }) {
+function UserMenu({
+  userEmail,
+  handleSignOut,
+}: {
+  userEmail: string | undefined;
+  handleSignOut: () => void;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className={cn('flex items-center gap-2', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}>
+        <Button
+          variant='ghost'
+          className={
+            'flex items-center gap-2 text-foreground hover:bg-primary hover:text-primary-foreground'
+          }
+        >
           <User className='h-5 w-5' />
-          <span className="hidden lg:inline">Mi Cuenta</span>
+          <span className='hidden lg:inline'>Mi Cuenta</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className="mt-2">
+      <DropdownMenuContent align='end' className='mt-2'>
         <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className='cursor-pointer'>
@@ -163,21 +202,23 @@ function UserMenu({ userEmail, handleSignOut, isScrolled }: { userEmail: string 
           onClick={handleSignOut}
           className='cursor-pointer text-red-500'
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className='mr-2 h-4 w-4' />
           Cerrar Sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
-function CartButton({ totalItems, isScrolled }: { totalItems: number, isScrolled: boolean }) {
+function CartButton({ totalItems }: { totalItems: number }) {
   return (
     <Link href='/carrito'>
       <Button
         variant='ghost'
         size='icon'
-        className={cn('relative transition-colors', isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:bg-white/10')}
+        className={
+          'relative transition-colors text-foreground hover:bg-primary hover:text-primary-foreground'
+        }
       >
         <ShoppingBag className='h-6 w-6' />
         {totalItems > 0 && (
@@ -187,34 +228,68 @@ function CartButton({ totalItems, isScrolled }: { totalItems: number, isScrolled
         )}
       </Button>
     </Link>
-  )
+  );
 }
 
-function MobileNav({ isAdmin, user, userEmail, handleSignOut, totalItems, closeMenu }: { isAdmin: boolean, user: any, userEmail: string | undefined, handleSignOut: () => void, totalItems: number, closeMenu: () => void }) {
+function MobileNav({
+  isAdmin,
+  user,
+  userEmail,
+  handleSignOut,
+  totalItems,
+  closeMenu,
+}: {
+  isAdmin: boolean;
+  user: any;
+  userEmail: string | undefined;
+  handleSignOut: () => void;
+  totalItems: number;
+  closeMenu: () => void;
+}) {
   return (
     <div className='fixed inset-0 bg-background/95 backdrop-blur-lg z-50 flex flex-col p-6 md:hidden'>
-      <div className="flex justify-end mb-8">
-        <Button variant="ghost" size="icon" onClick={closeMenu}>
-          <X className="h-7 w-7" />
+      <div className='flex justify-end mb-8'>
+        <Button variant='ghost' size='icon' onClick={closeMenu}>
+          <X className='h-7 w-7' />
         </Button>
       </div>
       <nav className='flex flex-col items-center justify-center flex-grow space-y-8'>
-        <Link href='/' className='text-2xl font-semibold' onClick={closeMenu}>Inicio</Link>
-        <Link href='/productos' className='text-2xl font-semibold' onClick={closeMenu}>Productos</Link>
+        <Link href='/' className='text-2xl font-semibold' onClick={closeMenu}>
+          Inicio
+        </Link>
+        <Link
+          href='/productos'
+          className='text-2xl font-semibold'
+          onClick={closeMenu}
+        >
+          Productos
+        </Link>
         {isAdmin && (
-          <Link href='/admin' className='text-2xl font-semibold' onClick={closeMenu}>Admin</Link>
+          <Link
+            href='/admin'
+            className='text-2xl font-semibold'
+            onClick={closeMenu}
+          >
+            Admin
+          </Link>
         )}
       </nav>
-      <div className="border-t border-border pt-6">
-        <Suspense fallback={<div className='h-9 w-full bg-muted rounded-md mb-4' />}>
+      <div className='border-t border-border pt-6'>
+        <Suspense
+          fallback={<div className='h-9 w-full bg-muted rounded-md mb-4' />}
+        >
           <SearchInput />
         </Suspense>
-        <div className="flex justify-between items-center mt-6">
+        <div className='flex justify-between items-center mt-6'>
           {user ? (
-            <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} isScrolled={true} />
+            <UserMenu
+              userEmail={userEmail}
+              handleSignOut={handleSignOut}
+              isScrolled={true}
+            />
           ) : (
             <Link href='/auth' onClick={closeMenu}>
-              <Button variant='outline' className="w-full">
+              <Button variant='outline' className='w-full'>
                 <User className='mr-2 h-5 w-5' />
                 Iniciar Sesión
               </Button>
@@ -224,5 +299,5 @@ function MobileNav({ isAdmin, user, userEmail, handleSignOut, totalItems, closeM
         </div>
       </div>
     </div>
-  )
+  );
 }

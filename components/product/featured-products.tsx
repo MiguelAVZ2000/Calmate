@@ -15,7 +15,7 @@ type Product = {
   description: string;
   price: number;
   original_price?: number;
-  image_url: string;
+  image: string;
   rating: number;
   reviews_count: number;
   badge: string;
@@ -31,9 +31,18 @@ export function FeaturedProducts() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
-  const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+  const scrollPrev = useCallback(
+    () => emblaApi && emblaApi.scrollPrev(),
+    [emblaApi]
+  );
+  const scrollNext = useCallback(
+    () => emblaApi && emblaApi.scrollNext(),
+    [emblaApi]
+  );
+  const scrollTo = useCallback(
+    (index: number) => emblaApi && emblaApi.scrollTo(index),
+    [emblaApi]
+  );
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -74,13 +83,14 @@ export function FeaturedProducts() {
         <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='text-center mb-12'>
             <div className='flex justify-center items-center gap-3 mb-4'>
-            <Leaf className='h-8 w-8 text-primary' />
-            <h2 className='font-serif text-3xl md:text-4xl font-bold text-foreground'>
-              Nuestros Favoritos
-            </h2>
-          </div>
+              <Leaf className='h-8 w-8 text-primary' />
+              <h2 className='font-serif text-3xl md:text-4xl font-bold text-foreground'>
+                Nuestros Favoritos
+              </h2>
+            </div>
             <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
-              Una selección de nuestros tés más queridos, perfectos para cualquier ocasión.
+              Una selección de nuestros tés más queridos, perfectos para
+              cualquier ocasión.
             </p>
           </div>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
@@ -115,7 +125,8 @@ export function FeaturedProducts() {
             Nuestros Favoritos
           </h2>
           <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
-            Una selección de nuestros tés más queridos, perfectos para cualquier ocasión.
+            Una selección de nuestros tés más queridos, perfectos para cualquier
+            ocasión.
           </p>
         </div>
 
@@ -123,7 +134,10 @@ export function FeaturedProducts() {
           <div className='overflow-hidden' ref={emblaRef}>
             <div className='flex -ml-4'>
               {products.map((product) => (
-                <div key={product.id} className='pl-4 flex-[0_0_100%] sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%]'>
+                <div
+                  key={product.id}
+                  className='pl-4 flex-[0_0_100%] sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%]'
+                >
                   <ProductCard product={product} />
                 </div>
               ))}

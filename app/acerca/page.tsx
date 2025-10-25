@@ -2,16 +2,9 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Leaf,
-  Award,
-  Globe,
-  Heart,
-  Users,
-  Mountain,
-  Clock,
-} from 'lucide-react';
+import { Leaf, Award, Globe, Heart } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AboutPage() {
   return (
@@ -46,43 +39,39 @@ export default function AboutPage() {
                 </h2>
                 <div className='space-y-4 text-muted-foreground'>
                   <p className='text-pretty'>
-                    Nuestra historia comienza en 1924, cuando Amalia Schmidt,
-                    hija de inmigrantes alemanes en la Región de Los Lagos, unió
-                    su pasión por el té europeo con la sabiduría ancestral de
-                    las hierbas nativas que descubrió en los bosques
-                    valdivianos. En su pequeña casa de campo, comenzó a crear
-                    mezclas únicas, combinando la robustez del Ceylán con la
-                    audacia del maqui y la calma del boldo.
+                    Calmaté nació del amor por el té y del deseo de compartir su
+                    esencia con quienes aprecian una taza llena de aroma y
+                    autenticidad. Nuestra pasión nos inspira a crear mezclas
+                    únicas, elaboradas con ingredientes seleccionados y procesos
+                    responsables que realzan el sabor y la experiencia.
                   </p>
                   <p className='text-pretty'>
-                    Lo que empezó como un pasatiempo para calmar el alma (de ahí
-                    &quot;Calmoté&quot;), rápidamente se convirtió en un tesoro
-                    local. Los vecinos quedaban maravillados con sus infusiones,
-                    que ofrecían un refugio de sabor y bienestar. Con el tiempo,
-                    la familia continuó el legado, explorando la Patagonia en
-                    busca de nuevos ingredientes y perfeccionando las recetas de
-                    Amalia.
+                    Lo que comenzó como un sueño sencillo fue tomando forma
+                    entre personas que disfrutan del ritual del té y del
+                    bienestar que brinda. Con dedicación, fuimos perfeccionando
+                    cada receta para que cada infusión exprese nuestra entrega y
+                    el cuidado en cada detalle.
                   </p>
                   <p className='text-pretty'>
-                    Hoy, Calmoté lleva esa misma esencia a todo Chile.
-                    Mantenemos relaciones directas con pequeños recolectores y
-                    comunidades locales desde el Desierto de Atacama hasta la
-                    Patagonia, asegurando que cada hoja y fruto sea tratado con
-                    respeto, garantizando comercio justo y sostenibilidad.
+                    Hoy continuamos fieles a nuestra esencia: ofrecer té de
+                    calidad, respetando a quienes lo cultivan y a la naturaleza
+                    que lo hace posible. Trabajamos con compromiso y gratitud,
+                    seleccionando con esmero cada hoja y fruto para promover un
+                    comercio justo y sostenible.
                   </p>
                 </div>
               </div>
               <div className='relative'>
                 <Image
-                  src='/southern-chile-landscape-with-tea-elements.jpg' // Placeholder for a more relevant image
+                  src='/vintage-tea-plantation-workers-in-1890s-with-tradi.jpg'
                   alt='Historia de Calmoté - Fundada en el sur de Chile'
-                  width={1200}
-                  height={800}
+                  width={900}
+                  height={600}
                   className='w-full h-auto rounded-lg shadow-lg'
                 />
                 <div className='absolute -bottom-6 -right-6 bg-primary text-primary-foreground p-6 rounded-lg shadow-lg'>
                   <div className='text-center'>
-                    <div className='font-serif text-3xl font-bold'>1924</div>
+                    <div className='font-serif text-3xl font-bold'>2025</div>
                     <div className='text-sm opacity-90'>Fundación</div>
                   </div>
                 </div>
@@ -180,19 +169,23 @@ export default function AboutPage() {
                 elegido Calmoté como su compañero de confianza.
               </p>
               <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-                <Button
-                  size='lg'
-                  className='bg-primary hover:bg-primary/90 text-primary-foreground'
-                >
-                  Explorar Nuestra Colección
-                </Button>
-                <Button
-                  variant='outline'
-                  size='lg'
-                  className='border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent'
-                >
-                  Contactar con Nosotros
-                </Button>
+                <Link href='/productos'>
+                  <Button
+                    size='lg'
+                    className='bg-primary hover:bg-primary/90 text-primary-foreground'
+                  >
+                    Explorar Nuestra Colección
+                  </Button>
+                </Link>
+                <Link href='/contacto'>
+                  <Button
+                    variant='outline'
+                    size='lg'
+                    className='border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent'
+                  >
+                    Contactar con Nosotros
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

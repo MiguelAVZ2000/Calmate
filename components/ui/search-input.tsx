@@ -14,20 +14,21 @@ export function SearchInput() {
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-
-    if (!debouncedQuery) {
-      current.delete('q');
-    } else {
+    if (debouncedQuery) {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
       current.set('q', debouncedQuery);
-    }
+      const search = current.toString();
+      const newUrl = `/productos${search ? `?${search}` : ''}`;
+      const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
-    const search = current.toString();
-    const newUrl = `${pathname}${search ? `?${search}` : ''}`;
-
-    // Only push if the URL has actually changed
-    if (newUrl !== `${pathname}?${searchParams.toString()}`) {
-      router.push(newUrl);
+      if (newUrl !== currentUrl) {
+        router.push(newUrl);
+      }
+    } else if (pathname === '/productos' && searchParams.has('q')) {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.delete('q');
+      const search = current.toString();
+      router.push(`/productos${search ? `?${search}` : ''}`);
     }
   }, [debouncedQuery, pathname, router, searchParams]);
 

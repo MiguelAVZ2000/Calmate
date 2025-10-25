@@ -18,13 +18,27 @@ type Category = {
   slug: string;
 };
 
-export function ProductFilters() {
+export function ProductFilters({
+  initialSearchParams,
+}: {
+  initialSearchParams: { [key: string]: string | string[] | undefined };
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [defaultSort, setDefaultSort] = useState(
+    initialSearchParams && initialSearchParams.sort
+      ? (initialSearchParams.sort as string)
+      : ''
+  );
+  const [defaultCategory, setDefaultCategory] = useState(
+    initialSearchParams && initialSearchParams.category
+      ? (initialSearchParams.category as string)
+      : ''
+  );
   const supabase = createClient();
 
   useEffect(() => {
@@ -72,7 +86,7 @@ export function ProductFilters() {
       <div className='flex-1'>
         <Select
           onValueChange={(value) => handleFilterChange('sort', value)}
-          defaultValue={searchParams.get('sort') || ''}
+          defaultValue={defaultSort}
         >
           <SelectTrigger className='w-full'>
             <SelectValue placeholder='Ordenar por' />
@@ -89,7 +103,7 @@ export function ProductFilters() {
       <div className='flex-1'>
         <Select
           onValueChange={(value) => handleFilterChange('category', value)}
-          defaultValue={searchParams.get('category') || ''}
+          defaultValue={defaultCategory}
           disabled={loading || !!error}
         >
           <SelectTrigger className='w-full'>
