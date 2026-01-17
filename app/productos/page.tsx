@@ -1,39 +1,27 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/server'; // Import server client
+import { createClient } from '@/lib/supabase/server'; // Inicialización del cliente de servidor
 import { cookies } from 'next/headers';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { AddToCartButton } from '@/components/cart/add-to-cart-button';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { ProductFilters } from '@/components/product/product-filters';
 import { Pagination } from '@/components/ui/pagination';
 
 const PAGE_SIZE = 8;
 
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  original_price?: number;
-  image: string;
-  rating: number;
-  reviews: number;
-  stock: number;
-  categories: {
-    name: string;
-  } | null;
-};
+import { Product } from '@/lib/types';
 
 type SearchPageProps = {
   searchParams: {
     q?: string;
     sort?: string;
     category?: string;
+    page?: string;
   };
 };
 

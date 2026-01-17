@@ -1,7 +1,9 @@
 'use client';
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-// Interface for the product variant being added to the cart
+/**
+ * Variante de producto que puede añadirse al carrito.
+ */
 export interface ProductVariant {
   productId: string;
   name: string;
@@ -10,13 +12,17 @@ export interface ProductVariant {
   weight: number;
 }
 
-// Interface for the item as it is stored in the cart
+/**
+ * Elemento almacenado en el carrito, extiende la variante con cantidad y un ID único de carrito.
+ */
 export interface CartItem extends ProductVariant {
-  cartId: string; // Unique identifier for the cart item (e.g., 'prod123-100g')
+  cartId: string; // Identificador único para el elemento del carrito (ej. 'prod123-100g')
   quantity: number;
 }
 
-// The shape of the context
+/**
+ * Estructura del contexto del carrito.
+ */
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (variant: ProductVariant) => void;
@@ -27,14 +33,22 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+/**
+ * Gancho personalizado para acceder al contexto del carrito.
+ * @throws Error si se usa fuera de un CartProvider.
+ */
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useCart debe ser usado dentro de un CartProvider');
   }
   return context;
 };
 
+/**
+ * Proveedor del contexto del carrito.
+ * Maneja el estado persistente y las acciones del carrito de compras.
+ */
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 

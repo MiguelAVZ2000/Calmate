@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { useSupabase } from '@/components/auth-provider';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
+import { useSupabase } from '@/components/providers/auth-provider';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Button } from '@/components/ui/button';
+import { Package, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -15,34 +16,15 @@ import {
 } from '@/components/ui/accordion';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
-// Define types for our data
-type Product = {
-  name: string;
-  image: string;
-};
-
-type OrderItem = {
-  quantity: number;
-  price: number;
-  products: Product | null;
-};
-
-type Order = {
-  id: number;
-  created_at: string;
-  total: number;
-  status: string;
-  order_items: OrderItem[];
-};
+import { Order } from '@/lib/types';
 
 export default function OrdersPage() {
-  const { user } = useSupabase();
+  const { user, supabase } = useSupabase();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     if (user) {
@@ -73,7 +55,7 @@ export default function OrdersPage() {
           console.error('Error fetching orders:', error);
           setError('No se pudieron cargar los pedidos.');
         } else {
-          setOrders(data as Order[]);
+          setOrders(data as unknown as Order[]);
         }
         setLoading(false);
       };
@@ -148,12 +130,15 @@ export default function OrdersPage() {
                           </p>
                           <Badge
                             variant={
-                              {
-                                pending: 'secondary',
-                                shipped: 'default',
-                                delivered: 'success',
-                                cancelled: 'destructive',
-                              }[order.status.toLowerCase()] || 'outline'
+                              (order.status.toLowerCase() === 'pending'
+                                ? 'secondary'
+                                : order.status.toLowerCase() === 'shipped'
+                                  ? 'default'
+                                  : order.status.toLowerCase() === 'delivered'
+                                    ? 'outline'
+                                    : order.status.toLowerCase() === 'cancelled'
+                                      ? 'destructive'
+                                      : 'outline') as any
                             }
                           >
                             {order.status}
@@ -173,11 +158,13 @@ export default function OrdersPage() {
                               className='flex items-center justify-between'
                             >
                               <div className='flex items-center gap-4'>
-                                <img
+                                <Image
                                   src={
                                     item.products?.image || '/placeholder.svg'
                                   }
                                   alt={item.products?.name || 'Producto'}
+                                  width={64}
+                                  height={64}
                                   className='w-16 h-16 object-cover rounded-md border border-border/20'
                                 />
                                 <div>

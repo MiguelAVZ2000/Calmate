@@ -1,12 +1,12 @@
-import { Header } from '@/components/header';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { ShoppingCart } from '@/components/cart/shopping-cart';
-import { Footer } from '@/components/footer';
 
 export default function CartPage() {
   return (
-    <div className='min-h-screen bg-background'>
+    <div className='min-h-screen bg-background flex flex-col'>
       <Header />
-      <main>
+      <main className='flex-grow'>
         <ShoppingCart />
       </main>
       <Footer />

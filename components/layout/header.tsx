@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useSupabase } from '@/components/auth-provider';
+import { useSupabase } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import {
   ShoppingBag,
@@ -16,7 +16,7 @@ import {
   Leaf,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { SearchInput } from './ui/search-input';
+import { SearchInput } from '@/components/ui/search-input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,11 @@ import {
 import { useCart } from '@/hooks/useCart';
 import { cn } from '@/lib/utils';
 
+/**
+ * Componente de encabezado principal.
+ * Gestiona la navegación, la búsqueda, el menú de usuario y el acceso al carrito.
+ * Se adapta dinámicamente al desplazamiento de la página.
+ */
 export function Header() {
   const router = useRouter();
   const { supabase, user, profile } = useSupabase();
@@ -146,6 +151,9 @@ export function Header() {
   );
 }
 
+/**
+ * Enlace de navegación estilizado con icono opcional.
+ */
 function NavLink({
   href,
   children,
@@ -168,6 +176,9 @@ function NavLink({
   );
 }
 
+/**
+ * Menú desplegable para acciones de usuario (Perfil, Pedidos, Cerrar Sesión).
+ */
 function UserMenu({
   userEmail,
   handleSignOut,
@@ -210,6 +221,9 @@ function UserMenu({
   );
 }
 
+/**
+ * Botón del carrito con indicador de cantidad.
+ */
 function CartButton({ totalItems }: { totalItems: number }) {
   return (
     <Link href='/carrito'>
@@ -231,6 +245,9 @@ function CartButton({ totalItems }: { totalItems: number }) {
   );
 }
 
+/**
+ * Navegación lateral para dispositivos móviles.
+ */
 function MobileNav({
   isAdmin,
   user,
@@ -282,11 +299,7 @@ function MobileNav({
         </Suspense>
         <div className='flex justify-between items-center mt-6'>
           {user ? (
-            <UserMenu
-              userEmail={userEmail}
-              handleSignOut={handleSignOut}
-              isScrolled={true}
-            />
+            <UserMenu userEmail={userEmail} handleSignOut={handleSignOut} />
           ) : (
             <Link href='/auth' onClick={closeMenu}>
               <Button variant='outline' className='w-full'>
@@ -295,7 +308,7 @@ function MobileNav({
               </Button>
             </Link>
           )}
-          <CartButton totalItems={totalItems} isScrolled={true} />
+          <CartButton totalItems={totalItems} />
         </div>
       </div>
     </div>

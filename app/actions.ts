@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 
+/**
+ * Elimina un usuario de la base de datos de autenticación (sólo para administradores).
+ */
 export async function deleteUser(userId: string) {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -11,13 +14,16 @@ export async function deleteUser(userId: string) {
   const { error } = await supabase.auth.admin.deleteUser(userId);
 
   if (error) {
-    console.error('Error deleting user:', error);
+    console.error('Error al eliminar usuario:', error);
     return { error: error.message };
   }
 
   revalidatePath('/admin');
 }
 
+/**
+ * Actualiza el rol de un usuario entre 'admin' y 'user'.
+ */
 export async function updateUserRole(userId: string, currentRole: string) {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -29,7 +35,7 @@ export async function updateUserRole(userId: string, currentRole: string) {
   });
 
   if (error) {
-    console.error('Error updating user role:', error);
+    console.error('Error al actualizar rol del usuario:', error);
     return { error: error.message };
   }
 

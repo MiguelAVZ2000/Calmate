@@ -8,29 +8,30 @@ import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
-// Define a type for our product for better type safety
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  original_price?: number;
-  image: string;
-  rating: number;
-  reviews_count: number;
-  badge: string;
-  stock: number;
-};
+import { useCart, ProductVariant } from '@/hooks/useCart';
+import { toast } from 'sonner';
+import { Product } from '@/lib/types';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Implement add to cart logic here
-    console.log(`Product ${product.name} added to cart`);
+
+    const variant: ProductVariant = {
+      productId: String(product.id),
+      name: product.name,
+      price: product.price,
+      image_url: product.image,
+      weight: 100,
+    };
+
+    addToCart(variant);
+    toast.success(`${product.name} (100g) añadido al carrito.`);
   };
 
   return (

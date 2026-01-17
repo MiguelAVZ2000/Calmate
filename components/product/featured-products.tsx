@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ProductCard } from '@/components/product/product-card';
 import { ProductCardSkeleton } from '@/components/product/product-card-skeleton';
-import { createClient } from '@/lib/supabase/client';
+import { useSupabase } from '@/components/providers/auth-provider';
 import { ChevronLeft, ChevronRight, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -23,10 +23,10 @@ type Product = {
 };
 
 export function FeaturedProducts() {
+  const { supabase } = useSupabase();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
   const [selectedIndex, setSelectedIndex] = useState(0);

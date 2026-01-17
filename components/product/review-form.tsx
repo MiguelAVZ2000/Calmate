@@ -7,8 +7,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
-import { useSupabase } from '@/components/auth-provider';
-import { createClient } from '@/lib/supabase/client';
+import { useSupabase } from '@/components/providers/auth-provider';
 
 const reviewSchema = z.object({
   rating: z.number().min(1, 'La calificación es requerida'),
@@ -20,8 +19,7 @@ const reviewSchema = z.object({
 type ReviewFormValues = z.infer<typeof reviewSchema>;
 
 export function ReviewForm({ productId }: { productId: number }) {
-  const { user } = useSupabase();
-  const supabase = createClient();
+  const { user, supabase } = useSupabase();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 

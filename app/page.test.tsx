@@ -2,19 +2,19 @@ import { render, screen } from '@testing-library/react';
 import HomePage from './page';
 
 // Mock child components to isolate the HomePage component test
-jest.mock('@/components/header', () => ({
+jest.mock('@/components/layout/header', () => ({
   Header: () => <header>Mocked Header</header>,
 }));
-jest.mock('@/components/hero-section', () => ({
+jest.mock('@/components/marketing/hero-section', () => ({
   HeroSection: () => <div>Mocked Hero Section</div>,
 }));
 jest.mock('@/components/product/featured-products', () => ({
   FeaturedProducts: () => <div>Mocked Featured Products</div>,
 }));
-jest.mock('@/components/our-story', () => ({
+jest.mock('@/components/marketing/our-story', () => ({
   OurStory: () => <div>Mocked Our Story</div>,
 }));
-jest.mock('@/components/footer', () => ({
+jest.mock('@/components/layout/footer', () => ({
   Footer: () => <footer>Mocked Footer</footer>,
 }));
 

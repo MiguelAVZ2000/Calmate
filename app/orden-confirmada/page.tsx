@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { ConfirmationContent } from './confirmation-content';
 
 function ConfirmationSkeleton() {

@@ -1,10 +1,14 @@
+/**
+ * Layout principal de la aplicación.
+ * Define la estructura base, fuentes y proveedores globales.
+ */
 import type React from 'react';
 import type { Metadata } from 'next';
 import {
   Playfair_Display,
   Source_Sans_3 as Source_Sans_Pro,
 } from 'next/font/google';
-import SupabaseProvider from '@/components/auth-provider';
+import SupabaseProvider from '@/components/providers/auth-provider';
 import { CartProvider } from '@/hooks/useCart';
 import { Toaster } from 'sonner';
 import './globals.css';
@@ -23,10 +27,21 @@ const sourceSans = Source_Sans_Pro({
 });
 
 export const metadata: Metadata = {
-  title: 'Calmaté - Premium Tea Collection',
+  title: {
+    default: 'Calmaté - Colección de Té Premium',
+    template: '%s | Calmaté',
+  },
   description:
-    'Discover the finest selection of luxury teas from around the world. Experience quality, tradition, and elegance in every cup.',
-  generator: 'v0.app',
+    'Experimenta la serenidad en cada sorbo. Descubre nuestra selección exclusiva de tés artesanales, accesorios y rituales de bienestar cuidadosamente curados.',
+  keywords: [
+    'té premium',
+    'té artesanal',
+    'bienestar',
+    'calmate',
+    'infusiones',
+  ],
+  authors: [{ name: 'Calmaté Team' }],
+  robots: 'index, follow',
 };
 
 export default function RootLayout({
@@ -37,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang='es'
-      className={`${playfair.variable} ${sourceSans.variable} antialiased`}
+      className={`${playfair.variable} ${sourceSans.variable} antialiased scroll-smooth`}
     >
       <body>
         <SupabaseProvider>

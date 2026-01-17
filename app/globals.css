@@ -4,40 +4,40 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Luxury tea brand color palette */
-  --background: oklch(1 0 0); /* Pure white */
-  --foreground: oklch(0.3 0 0); /* Dark charcoal for text */
-  --card: oklch(1 0 0); /* White cards */
-  --card-foreground: oklch(0.3 0 0); /* Dark text on cards */
-  --popover: oklch(1 0 0); /* White popover */
-  --popover-foreground: oklch(0.3 0 0); /* Dark text in popover */
-  --primary: oklch(0.65 0.15 85); /* Elegant gold */
-  --primary-foreground: oklch(1 0 0); /* White text on gold */
-  --secondary: oklch(0.75 0.02 0); /* Sophisticated silver */
-  --secondary-foreground: oklch(0.2 0 0); /* Dark text on silver */
-  --muted: oklch(0.98 0 0); /* Very light background */
-  --muted-foreground: oklch(0.5 0 0); /* Medium gray text */
-  --accent: oklch(0.65 0.15 85); /* Gold accent */
-  --accent-foreground: oklch(1 0 0); /* White text on accent */
-  --destructive: oklch(0.5 0.2 25); /* Elegant red */
-  --destructive-foreground: oklch(1 0 0); /* White text on red */
-  --border: oklch(0.8 0 0); /* Darker gray borders */
-  --input: oklch(0.9 0 0); /* Light gray inputs */
-  --ring: oklch(0.65 0.15 85); /* Gold focus ring */
-  --chart-1: oklch(0.65 0.15 85); /* Gold */
-  --chart-2: oklch(0.75 0.02 0); /* Silver */
-  --chart-3: oklch(0.98 0 0); /* Light background */
-  --chart-4: oklch(0.9 0 0); /* Light gray */
-  --chart-5: oklch(1 0 0); /* White */
-  --radius: 0.5rem; /* Soft rounded corners */
-  --sidebar: oklch(1 0 0); /* White sidebar */
-  --sidebar-foreground: oklch(0.3 0 0); /* Dark sidebar text */
-  --sidebar-primary: oklch(0.65 0.15 85); /* Gold sidebar primary */
-  --sidebar-primary-foreground: oklch(1 0 0); /* White text on gold */
-  --sidebar-accent: oklch(0.75 0.02 0); /* Silver sidebar accent */
-  --sidebar-accent-foreground: oklch(0.2 0 0); /* Dark text on silver */
-  --sidebar-border: oklch(0.9 0 0); /* Light gray sidebar border */
-  --sidebar-ring: oklch(0.65 0.15 85); /* Gold sidebar focus ring */
+  /* Paleta de colores para una marca de té de lujo */
+  --background: oklch(1 0 0); /* Blanco puro */
+  --foreground: oklch(0.3 0 0); /* Carbón oscuro para el texto */
+  --card: oklch(1 0 0); /* Tarjetas blancas */
+  --card-foreground: oklch(0.3 0 0); /* Texto oscuro en tarjetas */
+  --popover: oklch(1 0 0); /* Ventanas emergentes blancas */
+  --popover-foreground: oklch(0.3 0 0); /* Texto oscuro en ventanas emergentes */
+  --primary: oklch(0.65 0.15 85); /* Dorado elegante */
+  --primary-foreground: oklch(1 0 0); /* Texto blanco sobre dorado */
+  --secondary: oklch(0.75 0.02 0); /* Plata sofisticada */
+  --secondary-foreground: oklch(0.2 0 0); /* Texto oscuro sobre plata */
+  --muted: oklch(0.98 0 0); /* Fondo muy claro */
+  --muted-foreground: oklch(0.5 0 0); /* Texto gris medio */
+  --accent: oklch(0.65 0.15 85); /* Acento dorado */
+  --accent-foreground: oklch(1 0 0); /* Texto blanco sobre acento */
+  --destructive: oklch(0.5 0.2 25); /* Rojo elegante */
+  --destructive-foreground: oklch(1 0 0); /* Texto blanco sobre rojo */
+  --border: oklch(0.8 0 0); /* Bordes grises más oscuros */
+  --input: oklch(0.9 0 0); /* Entradas gris claro */
+  --ring: oklch(0.65 0.15 85); /* Anillo de enfoque dorado */
+  --chart-1: oklch(0.65 0.15 85); /* Dorado */
+  --chart-2: oklch(0.75 0.02 0); /* Plata */
+  --chart-3: oklch(0.98 0 0); /* Fondo claro */
+  --chart-4: oklch(0.9 0 0); /* Gris claro */
+  --chart-5: oklch(1 0 0); /* Blanco */
+  --radius: 0.5rem; /* Esquinas suavizadas */
+  --sidebar: oklch(1 0 0); /* Barra lateral blanca */
+  --sidebar-foreground: oklch(0.3 0 0); /* Texto oscuro en barra lateral */
+  --sidebar-primary: oklch(0.65 0.15 85); /* Primario dorado en barra lateral */
+  --sidebar-primary-foreground: oklch(1 0 0); /* Texto blanco sobre dorado */
+  --sidebar-accent: oklch(0.75 0.02 0); /* Acento plata en barra lateral */
+  --sidebar-accent-foreground: oklch(0.2 0 0); /* Texto oscuro sobre plata */
+  --sidebar-border: oklch(0.9 0 0); /* Borde gris claro en barra lateral */
+  --sidebar-ring: oklch(0.65 0.15 85); /* Anillo de enfoque dorado en barra lateral */
 }
 
 .dark {

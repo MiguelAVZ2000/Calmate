@@ -1,5 +1,5 @@
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { ProductCardSkeleton } from '@/components/product/product-card-skeleton';
 import { ProductFilters } from '@/components/product/product-filters';
 

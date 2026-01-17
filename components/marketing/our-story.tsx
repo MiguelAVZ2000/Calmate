@@ -36,19 +36,37 @@ export function OurStory() {
               Una Tradición de Calma y Calidad
             </h2>
             <p className='text-lg text-muted-foreground mb-6 text-pretty'>
-              En Calmaté, creemos que cada taza de té es un ritual. Una pausa en el día para reconectar y encontrar un momento de serenidad. Nuestra historia es una de pasión por la calidad y respeto por la tierra.
+              En Calmaté, creemos que cada taza de té es un ritual. Una pausa en
+              el día para reconectar y encontrar un momento de serenidad.
+              Nuestra historia es una de pasión por la calidad y respeto por la
+              tierra.
             </p>
 
             {/* Features */}
             <div className='grid sm:grid-cols-2 gap-x-8 gap-y-6 mb-8'>
-              <FeatureItem icon={<Leaf size={20} />} text='100% Orgánico y Natural' />
-              <FeatureItem icon={<Award size={20} />} text='Calidad Premium Garantizada' />
-              <FeatureItem icon={<Globe size={20} />} text='Comercio Justo y Sostenible' />
-              <FeatureItem icon={<Heart size={20} />} text='Elaborado con Pasión' />
+              <FeatureItem
+                icon={<Leaf size={20} />}
+                text='100% Orgánico y Natural'
+              />
+              <FeatureItem
+                icon={<Award size={20} />}
+                text='Calidad Premium Garantizada'
+              />
+              <FeatureItem
+                icon={<Globe size={20} />}
+                text='Comercio Justo y Sostenible'
+              />
+              <FeatureItem
+                icon={<Heart size={20} />}
+                text='Elaborado con Pasión'
+              />
             </div>
 
             <Link href='/acerca'>
-              <Button size="lg" className='bg-primary hover:bg-primary/90 text-primary-foreground'>
+              <Button
+                size='lg'
+                className='bg-primary hover:bg-primary/90 text-primary-foreground'
+              >
                 Nuestra Filosofía
               </Button>
             </Link>
@@ -62,9 +80,7 @@ export function OurStory() {
 function FeatureItem({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
     <div className='flex items-center space-x-3'>
-      <div className='flex-shrink-0 bg-primary/10 p-2 rounded-full'>
-        {icon}
-      </div>
+      <div className='flex-shrink-0 bg-primary/10 p-2 rounded-full'>{icon}</div>
       <span className='font-medium text-foreground'>{text}</span>
     </div>
   );

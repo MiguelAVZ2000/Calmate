@@ -19,12 +19,19 @@ export function HeroSection() {
 
       {/* Content */}
       <div className='relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <h1 className='font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance animate-fade-in duration-1000' style={{textShadow: '2px 2px 4px rgba(0,0,0,0.5)'}}>
+        <h1
+          className='font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 text-balance animate-fade-in duration-1000'
+          style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}
+        >
           Encuentra tu Momento de Calma
           <span className='block text-primary'>en Cada Taza</span>
         </h1>
-        <p className='text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto text-pretty animate-fade-in duration-1000 delay-300' style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>
-          Explora nuestra selección de tés artesanales y encuentra la mezcla perfecta para tu ritual diario.
+        <p
+          className='text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto text-pretty animate-fade-in duration-1000 delay-300'
+          style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+        >
+          Explora nuestra selección de tés artesanales y encuentra la mezcla
+          perfecta para tu ritual diario.
         </p>
         <div className='flex flex-col sm:flex-row gap-4 justify-center animate-fade-in duration-1000 delay-600'>
           <Link href='/productos'>

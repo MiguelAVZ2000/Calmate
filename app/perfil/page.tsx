@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSupabase } from '@/components/auth-provider';
+import { useSupabase } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { EditProfileForm } from '@/components/user/edit-profile-form';
 import { ArrowLeft } from 'lucide-react';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function ProfileSkeleton() {

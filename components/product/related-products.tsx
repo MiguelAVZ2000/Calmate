@@ -31,7 +31,10 @@ type RelatedProductsProps = {
   currentProductId: number;
 };
 
-export function RelatedProducts({ categoryId, currentProductId }: RelatedProductsProps) {
+export function RelatedProducts({
+  categoryId,
+  currentProductId,
+}: RelatedProductsProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
@@ -82,7 +85,11 @@ export function RelatedProducts({ categoryId, currentProductId }: RelatedProduct
       </h2>
       <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6'>
         {products.map((product) => (
-          <Link href={`/productos/${product.id}`} key={product.id} className='block'>
+          <Link
+            href={`/productos/${product.id}`}
+            key={product.id}
+            className='block'
+          >
             <Card className='group h-full flex flex-col hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20'>
               <CardContent className='p-0 flex flex-col flex-grow'>
                 <div className='relative overflow-hidden rounded-t-lg'>

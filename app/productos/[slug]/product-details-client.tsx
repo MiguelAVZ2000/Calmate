@@ -14,27 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { RelatedProducts } from '@/components/product/related-products';
 
-// Simplified Product Type
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: number; // This is now the base price
-  original_price?: number; // Optional original price for sales
-  image_url: string;
-  rating: number;
-  reviews_count: number;
-  badge: string;
-  stock: number; // This is the stock in base weight units (e.g., 100g units)
-};
-
-type Review = {
-  id: number;
-  rating: number;
-  comment: string;
-  created_at: string;
-  user: { id: string; email: string } | null;
-};
+import { Product, Review } from '@/lib/types';
 
 const WEIGHT_OPTIONS = [100, 200, 500]; // Available weights in grams
 const BASE_WEIGHT = 100; // The base weight for the product.price (e.g., 100g)
@@ -43,9 +23,11 @@ const STOCK_BASE_WEIGHT = 100; // The base weight for stock calculation
 export function ProductDetailsClient({
   product,
   reviews,
+  variants,
 }: {
   product: Product;
   reviews: Review[];
+  variants: any[];
 }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
@@ -77,13 +59,10 @@ export function ProductDetailsClient({
 
     addToCart({
       productId: String(product.id),
-      // Use a combination of product and weight for a unique ID if needed by the cart
-      variantId: `${product.id}-${selectedWeight}`,
       name: product.name,
       price: calculatedPrice,
-      image_url: product.image_url,
+      image_url: product.image_url || product.image || '/placeholder.svg',
       weight: selectedWeight,
-      quantity: quantity,
     });
 
     toast.success(
@@ -238,7 +217,7 @@ export function ProductDetailsClient({
       </div>
 
       <RelatedProducts
-        categoryId={product.category_id}
+        categoryId={product.category_id || 0}
         currentProductId={product.id}
       />
     </main>

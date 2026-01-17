@@ -1,114 +1,54 @@
-# Calmate
+# Calmaté - Colección de Té Premium
 
-_Una tienda de té online para encontrar tu momento de calma._
+Una experiencia sensorial de calma y calidad en cada taza.
 
-Este proyecto es una aplicación de e-commerce construida con el stack de Next.js, diseñada para ofrecer una experiencia de compra de tés y accesorios de alta calidad.
+Calmaté es una plataforma de comercio electrónico diseñada para quienes aprecian el té de alta calidad. Este proyecto ofrece una experiencia de compra fluida, desde el descubrimiento de mezclas artesanales hasta un proceso de pago seguro y ordenado.
 
-## ✨ Características
+## Características Principales
 
-- **Carga Optimizada:** Uso de Skeletons y carga de datos en el servidor para una experiencia de usuario fluida y rápida.
-- Navegación y filtrado de productos por categoría y precio.
-- Carrito de compras persistente.
-- Proceso de Checkout integrado.
-- Autenticación de usuarios con Supabase.
-- Panel de administración para la gestión de productos.
+- **Selección Curada:** Exploración de productos por categoría y origen.
+- **Carrito de Compras:** Gestión de productos con persistencia y actualización inmediata.
+- **Autenticación Segura:** Acceso protegido a través de Supabase para garantizar la seguridad de los usuarios.
+- **Rendimiento:** Uso de componentes de servidor de Next.js y estrategias de carga optimizadas para una navegación rápida.
+- **Diseño Adaptable:** Interfaz que se ajusta a diferentes dispositivos manteniendo la claridad y elegancia.
 
-## 🚀 Stack Tecnológico
+## Tecnologías Utilizadas
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router)
-- **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
-- **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
-- **Componentes UI:** [Shadcn/ui](https://ui.shadcn.com/)
-- **Backend y Base de Datos:** [Supabase](https://supabase.io/)
-- **Validación de Formularios:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
-- **Testing E2E:** [Playwright](https://playwright.dev/)
-- **Testing Unitario:** [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/)
+- **Framework:** Next.js (App Router)
+- **Lenguaje:** TypeScript
+- **Estilos:** Tailwind CSS
+- **Componentes:** Radix UI y Lucide React
+- **Base de Datos y Autenticación:** Supabase
+- **Gestión de Formularios:** React Hook Form y Zod
 
-## 📋 Requisitos Previos
+## Estructura del Proyecto
 
-Asegúrate de tener instalado lo siguiente en tu máquina:
+El proyecto sigue una organización modular para facilitar el mantenimiento:
 
-- [Node.js](https://nodejs.org/en/) (versión 18 o superior)
-- [npm](https://www.npmjs.com/)
+/components
+  ├── layout/       # Elementos estructurales como el encabezado y pie de página.
+  ├── marketing/    # Secciones informativas y de presentación de la marca.
+  ├── providers/    # Contextos globales como autenticación y temas.
+  ├── product/      # Lógica y visualización de productos.
+  ├── ui/           # Componentes base del sistema de diseño.
+  └── contact/      # Funcionalidades relacionadas con el contacto.
+/app                # Rutas y páginas principales de la aplicación.
+/hooks              # Funciones personalizadas para lógica compartida.
+/lib                # Configuraciones y herramientas de utilidad.
 
-## ⚙️ Instalación y Configuración
+## Estándares del Código
 
-Sigue estos pasos para poner en marcha el proyecto en tu entorno local.
+Este proyecto prioriza la claridad y el lenguaje natural:
+- **Idioma:** Los comentarios técnicos, la documentación interna y los mensajes de consola están íntegramente en español.
+- **Documentación:** Se utiliza JSDoc para explicar el propósito de los componentes y funciones principales de manera coherente.
+- **Estilo:** Se busca una estructura limpia que sea fácil de leer por cualquier desarrollador.
 
-1.  **Clona el repositorio (si aplica):**
+## Instalación y Configuración
 
-    ```bash
-    git clone <url-del-repositorio>
-    cd Calmate
-    ```
+1.  **Instalación:** Ejecutar npm install para descargar las dependencias.
+2.  **Variables de Entorno:** Configurar el archivo .env.local con las credenciales de Supabase.
+3.  **Desarrollo:** Iniciar el servidor con npm run dev.
+4.  **Calidad:** Realizar comprobaciones con npm run lint.
 
-2.  **Instala las dependencias:**
-
-    ```bash
-    npm install
-    ```
-
-3.  **Configura las variables de entorno:**
-    Crea una copia del archivo `.env.example` y renómbrala a `.env.local`.
-
-    ```bash
-    cp .env.example .env.local
-    ```
-
-    Luego, actualiza el archivo `.env.local` con tus propias claves de Supabase.
-
-    ```env
-    # URL de tu proyecto en Supabase
-    NEXT_PUBLIC_SUPABASE_URL=TU_SUPABASE_URL
-
-    # Clave anónima (pública) de tu proyecto en Supabase
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=TU_SUPABASE_ANON_KEY
-    ```
-
-## ▶️ Ejecutar el Proyecto
-
-1.  **Inicia el servidor de desarrollo:**
-
-    ```bash
-    npm run dev
-    ```
-
-    Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
-
-2.  **(Opcional) Puebla la base de datos con datos de prueba:**
-
-    ```bash
-    npm run db:seed
-    ```
-
-## 🧪 Testing
-
-Este proyecto utiliza una estrategia de testing dual para asegurar la calidad del código.
-
-### Pruebas End-to-End (Playwright)
-
--   **Tecnología**: [Playwright](https://playwright.dev/).
--   **Ubicación**: Los archivos de prueba están en la carpeta `e2e/`.
--   **Propósito**: Simular flujos de usuario completos para garantizar que la aplicación funciona correctamente de principio a fin.
-
-Para ejecutar estas pruebas, usa el siguiente comando:
-
-```bash
-npm run test:e2e
-```
-
-### Pruebas Unitarias y de Componentes (Jest)
-
--   **Tecnologías**: [Jest](https://jestjs.io/) y [React Testing Library](https://testing-library.com/).
--   **Ubicación**: Los archivos de prueba (`.test.tsx`) se encuentran junto a los componentes y páginas que prueban.
--   **Propósito**: Verificar que los componentes individuales se comportan como se espera.
-
-> **Nota:** La configuración de Jest está actualmente en revisión para solucionar problemas de compatibilidad con el entorno de ejecución. Las pruebas unitarias pueden no ejecutarse correctamente en este momento.
-
-## 📜 Scripts Disponibles
-
-- `npm run dev`: Inicia la aplicación en modo de desarrollo.
-- `npm run build`: Compila la aplicación para producción.
-- `npm run start`: Inicia un servidor de producción.
-- `npm run lint`: Ejecuta el linter (ESLint) para analizar el código.
-- `npm run test:e2e`: Ejecuta las pruebas End-to-End.
+---
+Proyecto enfocado en la calidad y el respeto por el ritual del té.
