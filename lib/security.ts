@@ -137,3 +137,27 @@ export function escapeHTML(text: string): string {
 
   return text.replace(/[&<>"'/]/g, (char) => map[char]);
 }
+
+/**
+ * Alias de escapeHTML — compatible con el patrón escapeHtml usado en otros módulos.
+ */
+export function escapeHtml(raw: string): string {
+  return raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
+/**
+ * Sanitiza un input de usuario: trim, truncado, escape HTML y eliminación de null bytes.
+ *
+ * @param value - Cadena a sanitizar
+ * @param maxLength - Longitud máxima (default 500)
+ */
+export function sanitizeInput(value: string, maxLength = 500): string {
+  if (typeof value !== 'string') return '';
+  return escapeHtml(value.trim().replace(/\0/g, '').slice(0, maxLength));
+}

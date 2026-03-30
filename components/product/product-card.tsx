@@ -55,6 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
               <Button
                 size='sm'
                 className='w-full bg-primary/90 text-primary-foreground md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 ease-in-out'
+                aria-label={`Agregar ${product.name} al carrito`}
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className='mr-2 h-4 w-4' />

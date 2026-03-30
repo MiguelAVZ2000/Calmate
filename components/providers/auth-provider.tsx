@@ -42,9 +42,14 @@ export default function SupabaseProvider({
 
   useEffect(() => {
     const fetchSession = async () => {
+      const sessionPromise = supabase.auth.getSession();
+      const timeoutPromise = new Promise<{ data: { session: null } }>(
+        (resolve) =>
+          setTimeout(() => resolve({ data: { session: null } }), 1500)
+      );
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await Promise.race([sessionPromise, timeoutPromise]);
       setUser(session?.user ?? null);
       if (session?.user) {
         const { data: userProfile } = await supabase

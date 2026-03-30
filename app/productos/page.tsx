@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server'; // Inicialización del cliente de servidor
 import { cookies } from 'next/headers';
 import { formatCurrency } from '@/lib/utils';
@@ -11,6 +12,8 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { ProductFilters } from '@/components/product/product-filters';
 import { Pagination } from '@/components/ui/pagination';
+
+export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 8;
 
@@ -93,7 +96,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </p>
         </div>
 
-        <ProductFilters initialSearchParams={searchParams} />
+        <Suspense fallback={<div className='h-16 mb-8' />}>
+          <ProductFilters initialSearchParams={searchParams} />
+        </Suspense>
 
         {error && (
           <div className='text-center text-red-500 my-8'>
@@ -173,7 +178,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 </Link>
               ))}
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
+            <Suspense fallback={null}>
+              <Pagination currentPage={currentPage} totalPages={totalPages} />
+            </Suspense>
           </>
         )}
       </main>

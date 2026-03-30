@@ -95,12 +95,19 @@ export function AuthForm() {
 
             <CardContent className='space-y-4'>
               {error && (
-                <div className='bg-destructive/10 text-destructive p-3 rounded-md text-center text-sm'>
+                <div
+                  id='auth-error'
+                  role='alert'
+                  className='bg-destructive/10 text-destructive p-3 rounded-md text-center text-sm'
+                >
                   {error}
                 </div>
               )}
               <TabsContent value='login' className='space-y-4 mt-0'>
-                <CardTitle className='text-xl font-serif text-center'>
+                <CardTitle
+                  id='login-title'
+                  className='text-xl font-serif text-center'
+                >
                   Bienvenido de vuelta
                 </CardTitle>
                 <CardDescription className='text-center'>
@@ -108,7 +115,11 @@ export function AuthForm() {
                   premium
                 </CardDescription>
 
-                <form onSubmit={handleSignIn} className='space-y-4'>
+                <form
+                  onSubmit={handleSignIn}
+                  className='space-y-4'
+                  aria-labelledby='login-title'
+                >
                   <div className='space-y-2'>
                     <Label htmlFor='email' className='font-medium'>
                       Correo electrónico
@@ -119,6 +130,9 @@ export function AuthForm() {
                       placeholder='tu@email.com'
                       className='border-primary/20 focus:border-primary'
                       required
+                      aria-required='true'
+                      aria-invalid={!!error}
+                      aria-describedby={error ? 'auth-error' : undefined}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -135,6 +149,9 @@ export function AuthForm() {
                         placeholder='••••••••'
                         className='border-primary/20 focus:border-primary pr-10'
                         required
+                        aria-required='true'
+                        aria-invalid={!!error}
+                        aria-describedby={error ? 'auth-error' : undefined}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -182,14 +199,21 @@ export function AuthForm() {
               </TabsContent>
 
               <TabsContent value='register' className='space-y-4 mt-0'>
-                <CardTitle className='text-xl font-serif text-center'>
+                <CardTitle
+                  id='register-title'
+                  className='text-xl font-serif text-center'
+                >
                   Crear cuenta
                 </CardTitle>
                 <CardDescription className='text-center'>
                   Únete a Calmaté y descubre el mundo del té premium
                 </CardDescription>
 
-                <form onSubmit={handleSignUp} className='space-y-4'>
+                <form
+                  onSubmit={handleSignUp}
+                  className='space-y-4'
+                  aria-labelledby='register-title'
+                >
                   <div className='grid grid-cols-2 gap-4'>
                     <div className='space-y-2'>
                       <Label htmlFor='firstName' className='font-medium'>
@@ -200,6 +224,7 @@ export function AuthForm() {
                         placeholder='Juan'
                         className='border-primary/20 focus:border-primary'
                         required
+                        aria-required='true'
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                       />
@@ -213,6 +238,7 @@ export function AuthForm() {
                         placeholder='Pérez'
                         className='border-primary/20 focus:border-primary'
                         required
+                        aria-required='true'
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                       />
@@ -229,6 +255,7 @@ export function AuthForm() {
                       placeholder='tu@email.com'
                       className='border-primary/20 focus:border-primary'
                       required
+                      aria-required='true'
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -245,6 +272,7 @@ export function AuthForm() {
                         placeholder='••••••••'
                         className='border-primary/20 focus:border-primary pr-10'
                         required
+                        aria-required='true'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
@@ -275,6 +303,7 @@ export function AuthForm() {
                         placeholder='••••••••'
                         className='border-primary/20 focus:border-primary pr-10'
                         required
+                        aria-required='true'
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                       />

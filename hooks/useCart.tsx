@@ -1,5 +1,11 @@
 'use client';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 /**
  * Variante de producto que puede añadirse al carrito.
@@ -49,8 +55,33 @@ export const useCart = () => {
  * Proveedor del contexto del carrito.
  * Maneja el estado persistente y las acciones del carrito de compras.
  */
+const CART_STORAGE_KEY = 'calmate-cart';
+
+function readCartFromStorage(): CartItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as CartItem[];
+  } catch {
+    return [];
+  }
+}
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() =>
+    readCartFromStorage()
+  );
+
+  // Persist cart to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch {
+      // localStorage unavailable (private browsing, quota exceeded) — ignore
+    }
+  }, [cartItems]);
 
   const addToCart = (variant: ProductVariant) => {
     const cartId = `${variant.productId}-${variant.weight}`;
